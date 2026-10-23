@@ -1,6 +1,6 @@
 /* ==========================================================================
    LOS BOCHEROS RESTÓ · LAMADRID ESTATE WINES
-   Menú Otoño · Siete Pasos
+   Menú Primavera (A la Carta) & Menú Otoño (7 Pasos)
    Estilo: Fino, Argentino Suave, Delicadamente Rústico y Sofisticado
    ========================================================================== */
 
@@ -85,23 +85,23 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(251, 249, 244, 0.94);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: rgba(251, 249, 244, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--color-paper-border);
-  box-shadow: 0 2px 12px rgba(44, 37, 35, 0.03);
+  box-shadow: 0 2px 14px rgba(44, 37, 35, 0.04);
   padding: 0.6rem 1.5rem;
   transition: var(--transition-smooth);
 }
 
 .nav-container {
-  max-width: 1200px;
+  max-width: 1250px;
   margin: 0 auto;
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 1rem;
+  gap: 0.85rem;
 }
 
 .nav-brand {
@@ -130,11 +130,130 @@ body {
   font-weight: 700;
 }
 
+/* Season Tabs Selector */
+.season-nav-tabs {
+  display: inline-flex;
+  background: var(--color-paper-dark);
+  padding: 4px;
+  border-radius: 30px;
+  border: 1px solid var(--color-paper-border);
+}
+
+.season-tab-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  padding: 0.45rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: var(--transition-smooth);
+}
+
+.season-tab-btn:hover {
+  color: var(--lamadrid-navy-primary);
+}
+
+.season-tab-btn.active {
+  background: var(--lamadrid-navy-primary);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(21, 59, 102, 0.25);
+}
+
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
+}
+
+/* Language Dropdown Selector */
+.lang-dropdown-wrapper {
+  position: relative;
+}
+
+.lang-btn {
+  padding: 0.4rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--color-paper-card);
+  border: 1px solid var(--color-paper-border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--lamadrid-navy-primary);
+  transition: var(--transition-smooth);
+}
+
+.lang-btn:hover {
+  border-color: var(--gold-bronze);
+  background: #ffffff;
+}
+
+.chevron-icon {
+  width: 12px;
+  height: 12px;
+  transition: transform 0.2s ease;
+}
+
+.lang-btn.open .chevron-icon {
+  transform: rotate(180deg);
+}
+
+.lang-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  background: #ffffff;
+  border: 1px solid var(--color-paper-border);
+  border-radius: 8px;
+  box-shadow: 0 8px 24px rgba(21, 59, 102, 0.12);
+  display: none;
+  flex-direction: column;
+  min-width: 170px;
+  z-index: 150;
+  overflow: hidden;
+}
+
+.lang-dropdown-menu.show {
+  display: flex;
+  animation: fadeInDown 0.2s ease-out;
+}
+
+.lang-opt {
+  background: none;
+  border: none;
+  padding: 0.55rem 0.9rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-sans);
+  font-size: 0.76rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.lang-opt:hover {
+  background: var(--color-paper-light);
+  color: var(--lamadrid-navy-primary);
+}
+
+.lang-opt.active {
+  background: var(--lamadrid-navy-soft);
+  color: var(--lamadrid-navy-primary);
+  font-weight: 700;
 }
 
 /* Pairing Filter Toggle Chips */
@@ -220,28 +339,6 @@ body {
   background: #ffffff;
 }
 
-#lang-toggle-btn {
-  padding: 0.35rem 0.75rem;
-}
-
-.lang-code {
-  transition: var(--transition-smooth);
-  opacity: 0.5;
-}
-
-.lang-code.active {
-  opacity: 1;
-  color: var(--lamadrid-navy-primary);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.lang-sep {
-  opacity: 0.4;
-  font-size: 0.7rem;
-}
-
 .nav-icon {
   width: 14px;
   height: 14px;
@@ -252,12 +349,12 @@ body {
    ========================================================================== */
 .hero-banner {
   position: relative;
-  min-height: 480px;
+  min-height: 520px;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  padding: 4rem 1.5rem 3rem;
+  padding: 3.5rem 1.5rem 2.8rem;
   text-align: center;
 }
 
@@ -271,14 +368,14 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center 38%;
+  object-position: center 36%;
   filter: saturate(1.05) brightness(0.92);
   transform: scale(1.02);
-  transition: transform 12s ease-out;
+  transition: opacity 0.8s ease-in-out, transform 12s ease-out;
 }
 
 .hero-banner:hover .hero-bg-img {
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .hero-overlay {
@@ -286,7 +383,7 @@ body {
   inset: 0;
   background: linear-gradient(
     180deg,
-    rgba(13, 38, 68, 0.72) 0%,
+    rgba(13, 38, 68, 0.75) 0%,
     rgba(21, 59, 102, 0.65) 45%,
     rgba(251, 249, 244, 0.98) 95%,
     rgba(251, 249, 244, 1) 100%
@@ -296,13 +393,54 @@ body {
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 820px;
+  max-width: 860px;
   margin: 0 auto;
   color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1.25rem;
+  gap: 1.1rem;
+}
+
+/* Great Wine Capitals Award Banner */
+.award-banner {
+  margin-bottom: 0.2rem;
+  animation: fadeInDown 0.8s ease-out;
+}
+
+.award-crest {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(207, 168, 110, 0.5);
+  padding: 0.35rem 1.25rem;
+  border-radius: 30px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.award-stars {
+  color: #ffd700;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+}
+
+.award-title {
+  font-family: var(--font-serif-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: #ffffff;
+  text-transform: uppercase;
+}
+
+.award-subtitle {
+  font-family: var(--font-sans);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  font-weight: 600;
+  color: var(--gold-light);
 }
 
 /* Refined Official Lamadrid Logo Emblem */
@@ -310,13 +448,12 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
-  animation: fadeInDown 1s ease-out;
+  gap: 0.5rem;
 }
 
 .logo-emblem-frame {
   background: #ffffff;
-  padding: 10px 18px;
+  padding: 9px 18px;
   border-radius: 8px;
   box-shadow: 
     0 10px 30px rgba(0, 0, 0, 0.35),
@@ -337,7 +474,7 @@ body {
 }
 
 .brand-logo-img {
-  height: 60px;
+  height: 54px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -374,7 +511,7 @@ body {
   letter-spacing: 0.3em;
   font-weight: 600;
   color: var(--gold-light);
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.2rem;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
 }
 
@@ -394,7 +531,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin: 0.6rem 0;
+  margin: 0.5rem 0;
   width: 100%;
   max-width: 320px;
 }
@@ -418,10 +555,10 @@ body {
   letter-spacing: 0.22em;
   color: #f7ede2;
   text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
-  margin-bottom: 1.2rem;
+  margin-bottom: 1rem;
 }
 
-/* Season & Steps Badge */
+/* Season & Type Badge */
 .season-badge-wrapper {
   display: flex;
   align-items: center;
@@ -461,6 +598,47 @@ body {
   padding: 0.2rem 0.65rem;
   border-radius: 20px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+}
+
+/* Review Invite Pill */
+.review-invite-banner {
+  margin-top: 0.25rem;
+}
+
+.review-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(13, 38, 68, 0.65);
+  border: 1px solid rgba(207, 168, 110, 0.4);
+  color: #ffffff;
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.73rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 1rem;
+  border-radius: 20px;
+  backdrop-filter: blur(6px);
+  transition: var(--transition-smooth);
+}
+
+.review-link-chip:hover {
+  background: var(--lamadrid-navy-primary);
+  border-color: var(--gold-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+.review-star {
+  color: #ffd700;
+  font-size: 0.85rem;
+}
+
+.external-icon {
+  width: 12px;
+  height: 12px;
+  opacity: 0.75;
 }
 
 /* ==========================================================================
@@ -534,57 +712,9 @@ body {
   color: var(--text-muted);
 }
 
-/* View Mode Selector Bar */
-.view-mode-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-  margin-bottom: 2rem;
-}
-
-.view-toggle-btn {
-  background: var(--color-paper-card);
-  border: 1px solid var(--color-paper-border);
-  padding: 0.55rem 1.25rem;
-  border-radius: 30px;
-  cursor: pointer;
-  font-family: var(--font-sans);
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  color: var(--text-secondary);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  transition: var(--transition-smooth);
-  box-shadow: var(--shadow-subtle);
-}
-
-.view-toggle-btn .mode-icon {
-  width: 16px;
-  height: 16px;
-}
-
-.view-toggle-btn:hover {
-  border-color: var(--lamadrid-navy-primary);
-  color: var(--lamadrid-navy-primary);
-}
-
-.view-toggle-btn.active {
-  background: var(--lamadrid-navy-primary);
-  color: #ffffff;
-  border-color: var(--lamadrid-navy-primary);
-  box-shadow: 0 4px 14px rgba(21, 59, 102, 0.2);
-}
-
 /* ==========================================================================
    Full Menu Parchment Sheet (Carta Tradicional)
    ========================================================================== */
-.menu-card-container {
-  transition: var(--transition-smooth);
-}
-
 .menu-parchment-sheet {
   background: var(--color-paper-card);
   border: 1px solid #dfd4c3;
@@ -645,9 +775,29 @@ body {
 /* In-Card Header */
 .card-inner-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2.5rem;
   padding-bottom: 1.5rem;
   position: relative;
+}
+
+.award-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.6rem;
+}
+
+.award-crown {
+  font-size: 1rem;
+}
+
+.award-caps {
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  color: var(--gold-bronze);
 }
 
 .card-crest {
@@ -694,7 +844,7 @@ body {
   align-items: center;
   justify-content: center;
   gap: 0.8rem;
-  max-width: 450px;
+  max-width: 480px;
   margin: 0 auto;
 }
 
@@ -718,18 +868,42 @@ body {
   text-transform: uppercase;
 }
 
-/* Courses List */
+/* Category Headers (Entradas, Principales, Postres) */
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.4rem;
+}
+
+.category-title {
+  font-family: var(--font-serif-display);
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--terracotta-wine);
+  text-transform: uppercase;
+}
+
+.category-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(110, 34, 50, 0.4), transparent);
+}
+
+/* Courses & Dishes */
 .courses-list {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1.1rem;
 }
 
 .course-item {
   display: flex;
   gap: 2rem;
   align-items: flex-start;
-  padding: 1.5rem 1.25rem;
+  padding: 1.25rem 1.2rem;
   border-radius: var(--border-radius-md);
   transition: var(--transition-smooth);
   position: relative;
@@ -740,7 +914,24 @@ body {
   box-shadow: 0 4px 15px rgba(21, 59, 102, 0.04);
 }
 
-/* Step Tag Column */
+/* Title row with price */
+.dish-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.dish-price {
+  font-family: var(--font-serif-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--terracotta-wine);
+  white-space: nowrap;
+  letter-spacing: 0.04em;
+}
+
 .course-step-tag {
   min-width: 140px;
   display: flex;
@@ -812,13 +1003,12 @@ body {
 
 .dish-title {
   font-family: var(--font-serif-display);
-  font-size: 1.32rem;
+  font-size: 1.25rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   color: var(--lamadrid-navy-dark);
   text-transform: uppercase;
-  line-height: 1.3;
-  margin-bottom: 0.35rem;
+  line-height: 1.35;
 }
 
 .chef-badge {
@@ -841,9 +1031,9 @@ body {
 .dish-pairings {
   display: flex;
   flex-direction: column;
-  gap: 0.55rem;
-  margin-top: 0.5rem;
-  padding-top: 0.75rem;
+  gap: 0.45rem;
+  margin-top: 0.4rem;
+  padding-top: 0.6rem;
   border-top: 1px dashed var(--color-paper-border);
 }
 
@@ -886,7 +1076,7 @@ body {
 
 .wine-name {
   font-family: var(--font-serif-body);
-  font-size: 1.12rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-primary);
 }
@@ -1017,8 +1207,51 @@ body[data-active-filter="upgrade"] .standard-pairing {
 }
 
 /* ==========================================================================
-   Step-by-Step Interactive Presentation Mode
+   Step-by-Step Interactive Presentation Mode (Autumn)
    ========================================================================== */
+.view-mode-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.view-toggle-btn {
+  background: var(--color-paper-card);
+  border: 1px solid var(--color-paper-border);
+  padding: 0.55rem 1.25rem;
+  border-radius: 30px;
+  cursor: pointer;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: var(--transition-smooth);
+  box-shadow: var(--shadow-subtle);
+}
+
+.view-toggle-btn .mode-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.view-toggle-btn:hover {
+  border-color: var(--lamadrid-navy-primary);
+  color: var(--lamadrid-navy-primary);
+}
+
+.view-toggle-btn.active {
+  background: var(--lamadrid-navy-primary);
+  color: #ffffff;
+  border-color: var(--lamadrid-navy-primary);
+  box-shadow: 0 4px 14px rgba(21, 59, 102, 0.2);
+}
+
 .step-navigator-container {
   background: var(--color-paper-card);
   border: 1px solid var(--color-paper-border);
@@ -1282,7 +1515,7 @@ body[data-active-filter="upgrade"] .standard-pairing {
 @keyframes fadeInDown {
   from {
     opacity: 0;
-    transform: translateY(-15px);
+    transform: translateY(-12px);
   }
   to {
     opacity: 1;
@@ -1293,14 +1526,29 @@ body[data-active-filter="upgrade"] .standard-pairing {
 /* ==========================================================================
    Responsive Adaptations (Móviles & Tablets)
    ========================================================================== */
-@media (max-width: 768px) {
+@media (max-width: 820px) {
+  .top-nav {
+    padding: 0.5rem 1rem;
+  }
+
+  .nav-container {
+    justify-content: center;
+  }
+
+  .season-nav-tabs {
+    order: 3;
+    width: 100%;
+    justify-content: center;
+    margin-top: 0.25rem;
+  }
+
   .hero-banner {
-    min-height: 420px;
-    padding: 3rem 1rem 2.5rem;
+    min-height: 480px;
+    padding: 2.5rem 1rem 2.2rem;
   }
 
   .main-restaurant-name {
-    font-size: 2.4rem;
+    font-size: 2.3rem;
   }
 
   .sub-restaurant-name {
@@ -1313,20 +1561,16 @@ body[data-active-filter="upgrade"] .standard-pairing {
   }
 
   .course-item {
+    padding: 1rem 0.5rem;
+  }
+
+  .dish-title-row {
     flex-direction: column;
-    gap: 0.6rem;
-    padding: 1.2rem 0.5rem;
+    gap: 0.3rem;
   }
 
-  .course-step-tag {
-    min-width: unset;
-    flex-direction: row;
-    align-items: center;
-    gap: 0.6rem;
-  }
-
-  .dish-title {
-    font-size: 1.18rem;
+  .dish-price {
+    font-size: 1.15rem;
   }
 
   .card-footer-details {
@@ -1363,7 +1607,8 @@ body[data-active-filter="upgrade"] .standard-pairing {
   .view-mode-bar,
   .terroir-story-section,
   .booking-cta-bar,
-  .site-footer {
+  .site-footer,
+  .review-invite-banner {
     display: none !important;
   }
 
@@ -1376,7 +1621,7 @@ body[data-active-filter="upgrade"] .standard-pairing {
   .menu-parchment-sheet {
     box-shadow: none !important;
     border: none !important;
-    padding: 0.5cm !important;
+    padding: 0.4cm !important;
   }
 
   .menu-parchment-sheet::after {
@@ -1385,14 +1630,14 @@ body[data-active-filter="upgrade"] .standard-pairing {
 
   .course-item {
     page-break-inside: avoid;
-    padding: 0.8rem 0 !important;
+    padding: 0.6rem 0 !important;
   }
 
   .course-divider {
-    margin: 0.4rem 0 !important;
+    margin: 0.3rem 0 !important;
   }
 
   .card-heading-title {
-    font-size: 2.2rem !important;
+    font-size: 2rem !important;
   }
 }
