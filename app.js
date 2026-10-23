@@ -1,852 +1,1226 @@
 /**
- * Los Bocheros Restó · Lamadrid Estate Wines
- * Interactive Menu Application
- * Multi-season: Primavera (A la Carta) & Otoño (7 Pasos)
- * Multilingual: ES, EN, PT, DE-CH (Suizo / Deutsch)
+ * Los Bocheros Restó · Bodega Lamadrid Estate Wines
+ * App de Pedidos & Comandas para Mozos
+ * Mobile-First, Offline-Ready (localStorage)
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Complete Multilingual Dictionary ---
-  const translations = {
-    es: {
-      tab_spring: 'Menú Primavera (Carta)',
-      tab_autumn: 'Menú Otoño (7 Pasos)',
-      filter_all: 'Todos los Maridajes',
-      filter_standard: 'Clásico',
-      filter_upgrade: 'Upgrade',
-      print_btn: 'Imprimir',
-      rest_pretitle: 'RESTAURANTE DE BODEGA',
-      spring_hero_tag: 'TEMPORADA PRIMAVERA 2026',
-      spring_hero_title: 'MENÚ PRIMAVERA',
-      spring_hero_type: 'A LA CARTA',
-      autumn_hero_tag: 'TEMPORADA OTOÑO 2026',
-      autumn_hero_title: 'MENÚ OTOÑO',
-      autumn_hero_type: 'SIETE PASOS',
-      leave_review: '¡Deje su reseña aquí! / Leave your review here!',
-      terroir_pill: 'Finca Las Compuertas · 1.050 m.s.n.m. · Viñas Centenarias',
-      allergy_notice: 'Consulte a nuestro personal sobre restricciones alimentarias y alergias.',
-      veg_notice: '(Disponemos de adaptaciones vegetarianas, veganas y celíacas con previo aviso)',
-      award_header: 'BEST OF WINE TOURISM · GREAT WINE CAPITALS · THE AWARD OF EXCELLENCE',
-      spring_card_title: 'MENÚ PRIMAVERA · CARTA',
-      card_menu_label: 'MENÚ OTOÑO · SIETE PASOS',
-      view_full_card: 'Carta Completa',
-      view_step_by_step: 'Paso a Paso Interactivo',
-      btn_prev_step: 'Paso Anterior',
-      btn_next_step: 'Siguiente Paso',
-      cat_entradas: 'ENTRADAS',
-      cat_principales: 'PRINCIPALES',
-      cat_postres: 'POSTRES',
-      badge_pairing: 'Maridaje:',
-      badge_upgrade: 'Upgrade:',
-      badge_iconic: 'Ícono Upgrade:',
-      specialty_tag: 'Especialidad',
-      main_tag: 'Principal',
-      cleanser_tag: 'Pre-Postre',
-      cleanser_info: 'Intermedio refrescante y limpiador de paladar antes del paso final.',
-      dessert_tag: 'Postre Final',
-      quote_text: '"En cada copa y en cada plato celebramos la tierra, el agua pura de deshielo y la pasión de nuestra gente en Las Compuertas."',
-      col_reservations: 'RESERVAS & VISITAS',
-      col_location: 'UBICACIÓN',
-      story_1_title: 'El Terruño de Las Compuertas',
-      story_1_desc: 'Situado en la primera zona de Luján de Cuyo a 1.050 metros sobre el nivel del mar, con suelos aluviales pedregosos y la brisa constante de la Cordillera de los Andes que otorgan una frescura inigualable a nuestros vinos.',
-      story_2_title: 'AOVE Lamadrid',
-      story_2_desc: 'Nuestro propio Aceite de Oliva Virgen Extra, extraído en frío a partir de olivos centenarios que conviven en armonía con nuestras hileras de viñas históricas.',
-      story_3_title: 'La Tradición de Los Bocheros',
-      story_3_desc: 'Homenaje a las reuniones vespertinas de amigos y cosechadores jugando a las bochas bajo la sombra de los álamos mendocinos tras una jornada de vendimia.',
-      cta_title: '¿Desea coordinar una reserva en Los Bocheros?',
-      cta_desc: 'Almuerzos maridados de Miércoles a Domingos con reserva previa.',
-      btn_whatsapp: 'Consultar por WhatsApp',
-      btn_view_menu: 'Ver Menú Completo',
-
-      // PRIMAVERA: Entradas
-      sp_e1_name: 'ESPÁRRAGOS A LA PLANCHA, QUESO PARMESANO, ALMENDRAS TOSTADAS, GEL DE LIMÓN Y YEMA CURADA',
-      sp_e2_name: 'PROVOLETA ASADA CON CHIMICHURRI ROJO CASERO',
-      sp_e3_name: 'SOLOMILLO DE CERDO CURADO AL MALBEC CON MANZANA VERDE FRESCA Y HOJAS VERDES',
-      sp_e4_name: 'QUESO DE CABRA, REMOLACHA ASADA, YOGUR ARTESANAL, FRAMBUESAS Y CROCANTES',
-      sp_e5_name: 'ESPECIAL DÚO EMPANADAS LOS BOCHEROS',
-
-      // PRIMAVERA: Principales
-      sp_p1_name: 'COSTILLA CONFITADA, CREMOSO DE PAPA, QUESO MORBIER, PANCETA AHUMADA Y FONDO DE COCCIÓN REDUCIDO',
-      sp_p2_name: 'PASTA ARTESANAL DE HONGOS, ARVEJAS TIERNAS, CROCANTE ESPECIADO Y BASE DE MUHAMMARA DE PIMIENTOS Y NUECES',
-      sp_p3_name: 'TRUCHA A LA PLANCHA, CURRY CREMOSO DE ALCAUCILES CON AJÍ AMARILLO Y CUSCÚS CROCANTE',
-      sp_p4_name: 'OJO DE BIFE Y VEGETALES FRESCOS DE TEMPORADA SALTEADOS',
-
-      // PRIMAVERA: Postres
-      sp_d1_name: 'PERA POCHADA, MOUSSE DE MASCARPONE, TOFFEE FLUIDO Y CRUMBLE DE QUESO PEPATO Y ALMENDRAS',
-      sp_d2_name: 'TARTA FLAN CARAMELIZADA CON HELADO',
-      sp_d3_name: 'SELECCIÓN ARTESANAL DE QUESOS Y DULCES DE ESTACIÓN',
-      sp_d4_name: 'CLÁSICO PANQUEQUE CASERO TIBIO CON DULCE DE LECHE ARTESANAL',
-
-      // OTOÑO: Pasos
-      step_1_title: 'PRIMER PASO',
-      dish_1_name: 'QUESO DE CABRA · CHUTNEY · HIERBAS',
-      dish_1_desc: 'Cremoso queso de cabra artesanal mendocino, chutney especiado de frutos de estación y bouquet de hierbas frescas de nuestra huerta orgánica.',
-      wine_1_std_notes: '(Las Compuertas · Notas frutadas y taninos aterciopelados)',
-      wine_1_upg_notes: '(Crianza en roble francés · Textura envolvente y frescura mineral)',
-
-      step_2_title: 'SEGUNDO PASO',
-      dish_2_name: 'GÍRGOLA · CALABAZA · NUECES',
-      dish_2_desc: 'Gírgolas doradas al fuego de sarmiento, textura suave de calabaza asada al rescoldo y crocante de nueces criollas del Valle de Uco.',
-      wine_2_std_notes: '(Agrelo · Pimienta negra, pimiento dulce y elegante estructura)',
-      wine_2_upg_notes: '(Las Compuertas · 12 meses en barrica · Complejidad y final sedoso)',
-
-      step_3_title: 'TERCER PASO',
-      dish_3_name: 'MOLLEJA · COLIFLOR · MANZANA · AOVE LAMADRID',
-      dish_3_desc: 'Molleja crocante glaseada, aterciopelado puré de coliflor tostada, láminas crocantes de manzana verde ácida y emulsión de Aceite de Oliva Virgen Extra Lamadrid.',
-      wine_3_std_notes: '(Corte de blancas de la casa · Acidez vibrante que limpia el paladar)',
-      wine_3_upg_notes: '(Blend de autor · Balance aromático y redondez en boca)',
-
-      step_4_title: 'CUARTO PASO',
-      dish_4_name: 'EMPANADA LOS BOCHEROS',
-      dish_4_badge: '(Especialidad del chef)',
-      dish_4_desc: 'Nuestra emblemática empanada mendocina cortada a cuchillo, masa casera con grasa de pella hojaldrada, cebolla caramelizada y horneada en horno de barro a leña.',
-      wine_4_std_notes: '(Fruta roja madura, ciruela, violetas y un toque de vainilla)',
-      wine_4_upg_notes: '(Selección de parcelas viejas · Gran concentración y elegancia pura)',
-
-      step_5_title: 'QUINTO PASO',
-      dish_5_name: 'OJO DE BIFE',
-      dish_5_desc: 'Corte noble de carne argentina madurada, asado lentamente sobre brasas de quebracho blanco y sarmientos de la finca, servido en su punto perfecto con cristales de sal marina.',
-      wine_5_std_notes: '(Cuerpo robusto, taninos dulces y redondez sublime)',
-      wine_5_upg_notes: '(El vino ícono de la bodega · Edición limitada de barricas de excepción)',
-
-      step_6_title: 'SEXTO PASO',
-      dish_6_name: 'YOGURT · LIMÓN',
-      dish_6_desc: 'Suave crema de yogurt natural de campo, curd de limón sutilmente cítrico y granizado herbal para renovar y refrescar los sentidos hacia el cierre dulce.',
-
-      step_7_title: 'SÉPTIMO PASO',
-      dish_7_name: 'CHOCOLATE · POMELO · TOFFEE · AOVE LAMADRID',
-      dish_7_desc: 'Cremoso de chocolate amargo 70%, gajos y notas vivaces de pomelo rosado, toffee salado a la manteca y fino hilo de Aceite de Oliva Virgen Extra Lamadrid.',
-      wine_7_std_notes: '(Pétillant Naturel · Burbuja natural salvaje, fruta fresca y vivacidad)',
-      wine_7_upg_notes: '(Método tradicional champenoise · Elegancia fina y burbuja persistente)'
-    },
-
-    en: {
-      tab_spring: 'Spring Menu (A la Carte)',
-      tab_autumn: 'Autumn Menu (7 Courses)',
-      filter_all: 'All Pairings',
-      filter_standard: 'Classic',
-      filter_upgrade: 'Upgrade',
-      print_btn: 'Print Menu',
-      rest_pretitle: 'WINERY RESTAURANT',
-      spring_hero_tag: 'SPRING SEASON 2026',
-      spring_hero_title: 'SPRING MENU',
-      spring_hero_type: 'A LA CARTE',
-      autumn_hero_tag: 'AUTUMN SEASON 2026',
-      autumn_hero_title: 'AUTUMN MENU',
-      autumn_hero_type: 'SEVEN COURSES',
-      leave_review: 'Leave your review here!',
-      terroir_pill: 'Las Compuertas Estate · 3,450 ft ASL · Centenary Vines',
-      allergy_notice: 'Please inform our staff about any dietary restrictions or food allergies.',
-      veg_notice: '(Vegetarian, vegan, and celiac options available upon advance request)',
-      award_header: 'BEST OF WINE TOURISM · GREAT WINE CAPITALS · THE AWARD OF EXCELLENCE',
-      spring_card_title: 'SPRING MENU · A LA CARTE',
-      card_menu_label: 'AUTUMN MENU · SEVEN COURSES',
-      view_full_card: 'Full Menu Card',
-      view_step_by_step: 'Interactive Course Walkthrough',
-      btn_prev_step: 'Previous Course',
-      btn_next_step: 'Next Course',
-      cat_entradas: 'STARTERS',
-      cat_principales: 'MAIN COURSES',
-      cat_postres: 'DESSERTS',
-      badge_pairing: 'Wine Pairing:',
-      badge_upgrade: 'Upgrade:',
-      badge_iconic: 'Icon Upgrade:',
-      specialty_tag: 'Specialty',
-      main_tag: 'Main',
-      cleanser_tag: 'Palate Cleanser',
-      cleanser_info: 'Refreshing citrus intermezzo to awaken the senses before dessert.',
-      dessert_tag: 'Grand Finale',
-      quote_text: '"In every glass and every dish we honor our land, pure Andean meltwater, and the dedication of our people in Las Compuertas."',
-      col_reservations: 'RESERVATIONS & VISITS',
-      col_location: 'LOCATION',
-      story_1_title: 'Las Compuertas Terroir',
-      story_1_desc: 'Nestled in the prime zone of Luján de Cuyo at 3,450 feet elevation, stony alluvial soils and cool Andean mountain breezes bring unrivaled freshness and distinction to our wines.',
-      story_2_title: 'Lamadrid Olive Oil',
-      story_2_desc: 'Our cold-pressed Extra Virgin Olive Oil, harvested from century-old olive groves thriving alongside our historic vineyard rows.',
-      story_3_title: 'The "Los Bocheros" Tradition',
-      story_3_desc: 'A tribute to the sunset gatherings of friends and grape harvesters playing bocce ("bochas") under the shade of Mendoza poplars after a day in the vineyard.',
-      cta_title: 'Would you like to reserve a table at Los Bocheros?',
-      cta_desc: 'Wine-paired lunches from Wednesday through Sunday by reservation only.',
-      btn_whatsapp: 'Inquire via WhatsApp',
-      btn_view_menu: 'View Full Menu',
-
-      // PRIMAVERA: Entradas
-      sp_e1_name: 'GRILLED ASPARAGUS, PARMESAN CHEESE, TOASTED ALMONDS, LEMON GEL AND CURED EGG YOLK',
-      sp_e2_name: 'ROASTED PROVOLETA CHEESE WITH HOMEMADE RED CHIMICHURRI',
-      sp_e3_name: 'MALBEC-CURED PORK TENDERLOIN WITH CRISP GREEN APPLE AND GARDEN GREENS',
-      sp_e4_name: 'GOAT CHEESE, ROASTED BEETROOT, ARTISANAL YOGURT, RASPBERRIES AND CRISP WAFERS',
-      sp_e5_name: 'SPECIAL DUO OF LOS BOCHEROS ARTISANAL EMPANADAS',
-
-      // PRIMAVERA: Principales
-      sp_p1_name: 'CONFIT SHORT RIB, CREAMY POTATO MOUSSELINE, MORBIER CHEESE, SMOKED BACON AND REDUCED JUS',
-      sp_p2_name: 'HANDMADE MUSHROOM PASTA, TENDER PEAS, SPICED CRUNCH AND ROASTED PEPPER-WALNUT MUHAMMARA BASE',
-      sp_p3_name: 'PAN-SEARED TROUT, CREAMY ARTICHOKE YELLOW CHILI CURRY AND CRISPY TOASTED COUSCOUS',
-      sp_p4_name: 'PRIME ARGENTINE RIBEYE STEAK AND SAUTÉED FRESH SEASONAL VEGETABLES',
-
-      // PRIMAVERA: Postres
-      sp_d1_name: 'POACHED PEAR, MASCARPONE MOUSSE, FLOWING SALTED TOFFEE AND PEPATO CHEESE & ALMOND CRUMBLE',
-      sp_d2_name: 'CARAMELIZED CUSTARD FLAN TART WITH ARTISANAL ICE CREAM',
-      sp_d3_name: 'ARTISANAL SELECTION OF REGIONAL CHEESES AND SEASONAL PRESERVES',
-      sp_d4_name: 'WARM HOMEMADE ARGENTINE CRÊPE WITH ARTISANAL DULCE DE LECHE',
-
-      // OTOÑO: Pasos
-      step_1_title: 'FIRST COURSE',
-      dish_1_name: 'GOAT CHEESE · CHUTNEY · HERBS',
-      dish_1_desc: 'Creamy artisanal Mendoza goat cheese, spiced seasonal fruit chutney, and fresh aromatic herbs from our organic estate garden.',
-      wine_1_std_notes: '(Las Compuertas · Ripe berry notes and velvety tannins)',
-      wine_1_upg_notes: '(Aged in French oak · Enveloping texture and mineral freshness)',
-
-      step_2_title: 'SECOND COURSE',
-      dish_2_name: 'OYSTER MUSHROOM · PUMPKIN · WALNUTS',
-      dish_2_desc: 'Golden oyster mushrooms seared over vine cuttings, ember-roasted autumn pumpkin purée, and toasted criollo walnuts from the Uco Valley.',
-      wine_2_std_notes: '(Agrelo · Cracked black pepper, sweet bell pepper, and elegant structure)',
-      wine_2_upg_notes: '(Las Compuertas · 12 months in oak barrels · Complexity and silky finish)',
-
-      step_3_title: 'THIRD COURSE',
-      dish_3_name: 'SWEETBREAD · CAULIFLOWER · APPLE · LAMADRID EVOO',
-      dish_3_desc: 'Crispy glazed sweetbread, velvety roasted cauliflower mousseline, tart green apple batons, and Lamadrid Extra Virgin Olive Oil emulsion.',
-      wine_3_std_notes: '(Signature estate white blend · Vibrant acidity that cleanses the palate)',
-      wine_3_upg_notes: '(Single-estate blend · Aromatic balance and harmonious palate)',
-
-      step_4_title: 'FOURTH COURSE',
-      dish_4_name: 'LOS BOCHEROS EMPANADA',
-      dish_4_badge: '(Chef\'s Specialty)',
-      dish_4_desc: 'Our iconic knife-cut Mendoza beef empanada with flaky layered handmade pastry, caramelized onions, and slow-baked in an artisanal wood-fired clay oven.',
-      wine_4_std_notes: '(Ripe red berries, dark plum, violet floral lift, and subtle French vanilla)',
-      wine_4_upg_notes: '(Old vine parcel selection · Intense concentration and pure poise)',
-
-      step_5_title: 'FIFTH COURSE',
-      dish_5_name: 'ARGENTINE RIBEYE STEAK',
-      dish_5_desc: 'Prime aged Argentine ribeye steak slowly grilled over native quebracho hardwood and estate vine prunings, finished with delicate sea salt crystals.',
-      wine_5_std_notes: '(Robust body, sweet polished tannins, and sublime lingering finish)',
-      wine_5_upg_notes: '(The winery\'s flagship icon wine · Limited edition aged in exceptional barrels)',
-
-      step_6_title: 'SIXTH COURSE',
-      dish_6_name: 'YOGURT · LEMON',
-      dish_6_desc: 'Smooth artisanal farm yogurt cream, zesty lemon curd, and wild garden herbal granita to cleanse and reset the palate.',
-
-      step_7_title: 'SEVENTH COURSE',
-      dish_7_name: 'CHOCOLATE · GRAPEFRUIT · TOFFEE · LAMADRID EVOO',
-      dish_7_desc: 'Dark chocolate 70% crémeux, fresh pink grapefruit suprêmes, rich salted butter toffee, and a delicate drizzle of Lamadrid Extra Virgin Olive Oil.',
-      wine_7_std_notes: '(Pétillant Naturel · Wild natural bubbles, vibrant fresh fruit, and lively zest)',
-      wine_7_upg_notes: '(Traditional champenoise method · Fine persistent bubbles and elegance)'
-    },
-
-    pt: {
-      tab_spring: 'Menu Primavera (À la Carte)',
-      tab_autumn: 'Menu Outono (7 Etapas)',
-      filter_all: 'Todas as Harmonizações',
-      filter_standard: 'Clássico',
-      filter_upgrade: 'Upgrade',
-      print_btn: 'Imprimir',
-      rest_pretitle: 'RESTAURANTE DE VINÍCOLA',
-      spring_hero_tag: 'TEMPORADA PRIMAVERA 2026',
-      spring_hero_title: 'MENU PRIMAVERA',
-      spring_hero_type: 'À LA CARTE',
-      autumn_hero_tag: 'TEMPORADA OUTONO 2026',
-      autumn_hero_title: 'MENU OUTONO',
-      autumn_hero_type: 'SETE ETAPAS',
-      leave_review: 'Deixe sua avaliação aqui!',
-      terroir_pill: 'Finca Las Compuertas · 1.050 m.s.n.m. · Vinhas Centenárias',
-      allergy_notice: 'Consulte nossa equipe sobre restrições alimentares e alergias.',
-      veg_notice: '(Dispomos de opções vegetarianas, veganas e celíacas com aviso prévio)',
-      award_header: 'BEST OF WINE TOURISM · GREAT WINE CAPITALS · THE AWARD OF EXCELLENCE',
-      spring_card_title: 'MENU PRIMAVERA · À LA CARTE',
-      card_menu_label: 'MENU OUTONO · SETE ETAPAS',
-      view_full_card: 'Cardápio Completo',
-      view_step_by_step: 'Passo a Passo Interativo',
-      btn_prev_step: 'Etapa Anterior',
-      btn_next_step: 'Próxima Etapa',
-      cat_entradas: 'ENTRADAS',
-      cat_principales: 'PRATOS PRINCIPAIS',
-      cat_postres: 'SOBREMESAS',
-      badge_pairing: 'Harmonização:',
-      badge_upgrade: 'Upgrade:',
-      badge_iconic: 'Ícone Upgrade:',
-      specialty_tag: 'Especialidade',
-      main_tag: 'Principal',
-      cleanser_tag: 'Pré-Sobremesa',
-      cleanser_info: 'Intermezzo refrescante de frutas cítricas para renovar o paladar.',
-      dessert_tag: 'Sobremesa Final',
-      quote_text: '"Em cada taça e em cada prato celebramos a terra, as águas puras do degelo e a paixão do nosso povo em Las Compuertas."',
-      col_reservations: 'RESERVAS & VISITAS',
-      col_location: 'LOCALIZAÇÃO',
-      story_1_title: 'O Terroir de Las Compuertas',
-      story_1_desc: 'Localizado na primeira zona de Luján de Cuyo a 1.050 metros de altitude, com solos aluviais pedregosos e brisas da Cordilheira dos Andes que conferem frescor inigualável aos nossos vinhos.',
-      story_2_title: 'Azeite Lamadrid',
-      story_2_desc: 'Nosso próprio Azeite de Oliva Extra Virgem, prensado a frio a partir de oliveiras centenárias que convivem em perfeita harmonia com nossas vinhas históricas.',
-      story_3_title: 'A Tradição de Los Bocheros',
-      story_3_desc: 'Homenagem aos encontros de fim de tarde de amigos e vindimadores jogando bocha sob a sombra dos álamos mendocinos.',
-      cta_title: 'Deseja coordenar uma reserva em Los Bocheros?',
-      cta_desc: 'Almoços harmonizados de Quarta a Domingo com reserva antecipada.',
-      btn_whatsapp: 'Consultar pelo WhatsApp',
-      btn_view_menu: 'Ver Cardápio Completo',
-
-      // PRIMAVERA: Entradas
-      sp_e1_name: 'ASPARGOS GRELHADOS, QUEIJO PARMESÃO, AMÊNDOAS TOSTADAS, GEL DE LIMÃO E GEMA CURADA',
-      sp_e2_name: 'PROVOLETA ASSADA COM CHIMICHURRI VERMELHO CASEIRO',
-      sp_e3_name: 'FILÉ MIGNON SUÍNO CURADO AO MALBEC COM MAÇÃ VERDE FRESCA E FOLHAS VERDES',
-      sp_e4_name: 'QUEIJO DE CABRA, BETERRABA ASSADA, IOGURTE ARTESANAL, FRAMBOESAS E CROCANTES',
-      sp_e5_name: 'ESPECIAL DUO DE EMPANADAS LOS BOCHEROS',
-
-      // PRIMAVERA: Principales
-      sp_p1_name: 'COSTELA CONFITADA, PURÊ CREMOSO DE BATATA, QUEIJO MORBIER, BACON DEFUMADO E REDUÇÃO DO PRÓPRIO MOLHO',
-      sp_p2_name: 'MASSA ARTESANAL DE COGUMELOS, ERVILHAS FRESCAS, CROCANTE DE ESPECIARIAS E BASE DE MUHAMMARA DE PIMENTÕES E NOZES',
-      sp_p3_name: 'TRUTA GRELHADA, CURRY CREMOSO DE ALCACHOFRAS COM AJÍ AMARILLO E CUSCUZ CROCANTE',
-      sp_p4_name: 'OJO DE BIFE ARGENTINO E VEGETAIS FRESCOS DA ESTAÇÃO SALTEADOS',
-
-      // PRIMAVERA: Postres
-      sp_d1_name: 'PÊRA POCHÊ, MOUSSE DE MASCARPONE, TOFFEE FLUIDO E CRUMBLE DE QUEIJO PEPATO E AMÊNDOAS',
-      sp_d2_name: 'TORTA PUDIM CARAMELIZADA COM SORVETE ARTESANAL',
-      sp_d3_name: 'SELEÇÃO ARTESANAL DE QUEIJOS E DOCES DA ESTAÇÃO',
-      sp_d4_name: 'CLÁSSICA PANQUECA CASEIRA MORNA RECHEADA COM DOCE DE LEITE ARTESANAL',
-
-      // OTOÑO: Pasos
-      step_1_title: 'PRIMEIRA ETAPA',
-      dish_1_name: 'QUEIJO DE CABRA · CHUTNEY · ERVAS',
-      dish_1_desc: 'Cremoso queijo de cabra artesanal mendocino, chutney de frutas sazonais e bouquet de ervas frescas da nossa horta orgânica.',
-      wine_1_std_notes: '(Las Compuertas · Notas frutadas e taninos aveludados)',
-      wine_1_upg_notes: '(Envelhecido em carvalho francês · Textura envolvente e frescor mineral)',
-
-      step_2_title: 'SEGUNDA ETAPA',
-      dish_2_name: 'COGUMELOS GÍRGOLA · ABÓBORA · NOZES',
-      dish_2_desc: 'Cogumelos dourados na brasa, purê aveludado de abóbora assada e crocante de nozes do Valle de Uco.',
-      wine_2_std_notes: '(Agrelo · Pimenta preta, pimentão doce e estrutura elegante)',
-      wine_2_upg_notes: '(Las Compuertas · 12 meses em barrica · Complexidade e final sedoso)',
-
-      step_3_title: 'TERCEIRA ETAPA',
-      dish_3_name: 'MOLEJAS · COUVE-FLOR · MAÇÃ · AZEITE LAMADRID',
-      dish_3_desc: 'Molejas crocantes glaceadas, purê de couve-flor tostada, lâminas de maçã verde ácida e emulsão de Azeite Lamadrid.',
-      wine_3_std_notes: '(Blend branco da casa · Acidez vibrante que limpa o paladar)',
-      wine_3_upg_notes: '(Blend de autor · Equilíbrio aromático e volume de boca)',
-
-      step_4_title: 'QUARTA ETAPA',
-      dish_4_name: 'EMPANADA LOS BOCHEROS',
-      dish_4_badge: '(Especialidade do chef)',
-      dish_4_desc: 'Nossa emblemática empanada mendocina cortada na ponta da faca, massa caseira folhada e assada em forno a lenha de barro.',
-      wine_4_std_notes: '(Frutas vermelhas maduras, ameixa, violetas e toque de baunilha)',
-      wine_4_upg_notes: '(Seleção de vinhas velhas · Grande concentração e pura elegância)',
-
-      step_5_title: 'QUINTA ETAPA',
-      dish_5_name: 'OJO DE BIFE',
-      dish_5_desc: 'Corte nobre de carne argentina maturada, assado lentamente sobre brasas de quebracho branco com cristais de sal marinho.',
-      wine_5_std_notes: '(Corpo robusto, taninos doces e harmonia sublime)',
-      wine_5_upg_notes: '(O vinho ícone da vinícola · Edição limitada de barricas excepcionais)',
-
-      step_6_title: 'SEXTA ETAPA',
-      dish_6_name: 'IOGURTE · LIMÃO',
-      dish_6_desc: 'Suave creme de iogurte artesanal, curd de limão cítrico e granita herbal para renovar os sentidos.',
-
-      step_7_title: 'SÉTIMA ETAPA',
-      dish_7_name: 'CHOCOLATE · TORANJA · TOFFEE · AZEITE LAMADRID',
-      dish_7_desc: 'Cremoso de chocolate 70%, gomos de toranja rosa, toffee salgado e fio de Azeite de Oliva Extra Virgem Lamadrid.',
-      wine_7_std_notes: '(Pétillant Naturel · Borbulhas naturais selvagens, fruta viva)',
-      wine_7_upg_notes: '(Método tradicional champenoise · Borbulha fina e persistente)'
-    },
-
-    'de-ch': {
-      tab_spring: 'Frühlingskarte (À la Carte)',
-      tab_autumn: 'Herbstmenü (7 Gänge)',
-      filter_all: 'Alle Weinbegleitungen',
-      filter_standard: 'Klassisch',
-      filter_upgrade: 'Upgrade',
-      print_btn: 'Drucken',
-      rest_pretitle: 'WEINGUT-RESTAURANT',
-      spring_hero_tag: 'FRÜHLINGS-SAISON 2026',
-      spring_hero_title: 'FRÜHLINGSMENÜ',
-      spring_hero_type: 'À LA CARTE',
-      autumn_hero_tag: 'HERBST-SAISON 2026',
-      autumn_hero_title: 'HERBSTMENÜ',
-      autumn_hero_type: 'SIEBEN GÄNGE',
-      leave_review: 'Hinterlassen Sie hier Ihre Bewertung!',
-      terroir_pill: 'Finca Las Compuertas · 1.050 m ü. M. · Hundertjährige Reben',
-      allergy_notice: 'Bitte informieren Sie unser Serviceteam über allfällige Allergien oder Diäten.',
-      veg_notice: '(Vegetarische, vegane und glutenfreie Varianten auf Voranmeldung erhältlich)',
-      award_header: 'BEST OF WINE TOURISM · GREAT WINE CAPITALS · THE AWARD OF EXCELLENCE',
-      spring_card_title: 'FRÜHLINGSKARTE · À LA CARTE',
-      card_menu_label: 'HERBSTMENÜ · SIEBEN GÄNGE',
-      view_full_card: 'Ganze Speisekarte',
-      view_step_by_step: 'Interaktiver Menü-Rundgang',
-      btn_prev_step: 'Vorheriger Gang',
-      btn_next_step: 'Nächster Gang',
-      cat_entradas: 'VORSPEISEN',
-      cat_principales: 'HAUPTGÄNGE',
-      cat_postres: 'DESSERTS',
-      badge_pairing: 'Weinbegleitung:',
-      badge_upgrade: 'Upgrade:',
-      badge_iconic: 'Ikonen-Upgrade:',
-      specialty_tag: 'Spezialität',
-      main_tag: 'Hauptgang',
-      cleanser_tag: 'Zwischengang',
-      cleanser_info: 'Erfrischendes Zitrus-Intermezzo zur Belebung des Gaumens vor dem Dessert.',
-      dessert_tag: 'Süsses Finale',
-      quote_text: '"In jedem Glas und jedem Gericht zelebrieren wir unsere Erde, reinstes Anden-Schmelzwasser und die Hingabe unseres Teams in Las Compuertas."',
-      col_reservations: 'RESERVATIONEN & BESUCHE',
-      col_location: 'STANDORT',
-      story_1_title: 'Das Terroir von Las Compuertas',
-      story_1_desc: 'Gelegen in der Spitzenzone von Luján de Cuyo auf 1.050 m ü. M., mit steinigen Schwemmlandböden und kühlenden Anden-Fallwinden für aussergewöhnliche Frische und Eleganz.',
-      story_2_title: 'Lamadrid Olivenöl',
-      story_2_desc: 'Unser kaltgepresstes Olivenöl Extra Vergine, gewonnen aus uralten Olivenbäumen, die in Harmonie mit unseren historischen Reben gedeihen.',
-      story_3_title: 'Die Tradition «Los Bocheros»',
-      story_3_desc: 'Eine Hommage an das abendliche Boccia-Spiel («Bochas») der Freunde und Weinleser unter den schattigen Pappeln von Mendoza.',
-      cta_title: 'Möchten Sie einen Tisch bei Los Bocheros reservieren?',
-      cta_desc: 'Weinbegleitete Mittagessen von Mittwoch bis Sonntag mit Voranmeldung.',
-      btn_whatsapp: 'Via WhatsApp anfragen',
-      btn_view_menu: 'Ganze Karte ansehen',
-
-      // PRIMAVERA: Entradas
-      sp_e1_name: 'GEGRILLTER SPARGEL, PARMESANKÄSE, GERÖSTETE MANDELN, ZITRONENGEL UND GEREIFTES EIGELB',
-      sp_e2_name: 'GEGRILLTER PROVOLETA-KÄSE MIT HAUSGEMACHTEM ROTEM CHIMICHURRI',
-      sp_e3_name: 'IN MALBEC GEREIFTES SCHWEINEFILET MIT FRISCHEM GRÜNEM APFEL UND BLATTSALATEN',
-      sp_e4_name: 'ZIEGENKÄSE, GERÖSTETE RANDE, HANDGEMACHTER JOGHURT, HIMBEEREN UND KNUSPERWAFFELN',
-      sp_e5_name: 'SPEZIELLES DUO LOS BOCHEROS EMPANADAS',
-
-      // PRIMAVERA: Principales
-      sp_p1_name: 'GESCHMORTE RINDER-QUERFIPPE, SAMTIGES KARTOFFELMOUSSELINE, MORBIER-KÄSE, RÄUCHERSPECK UND SCHMORJUS',
-      sp_p2_name: 'HAUSGEMACHTE WALDPILZ-PASTA, ZARTE ERBSEN, GEWÜRZ-CRUMBLE UND MUHAMMARA VON PEPERONI UND BAUMNÜSSEN',
-      sp_p3_name: 'GEBRATENE ANDEN-FORELLE, CREMIGES ARTISCHOCKEN-CURRY MIT GELBEM AJÍ UND KNUSPRIGEM COUSCOUS',
-      sp_p4_name: 'ARGENTINISCHES RIBEYE-STEAK MIT MARKTFRISCHEM FRÜHLINGSGEMÜSE',
-
-      // PRIMAVERA: Postres
-      sp_d1_name: 'POCHIERTE BIRNE, MASCARPONE-MOUSSE, FLÜSSIGES TOFFEE UND PEPATO-MANDEL-CRUMBLE',
-      sp_d2_name: 'KARAMELLISIERTE FLAN-TARTE MIT HAUSGEMACHTEM GLACÉ',
-      sp_d3_name: 'HANDWERKLICHE AUSWAHL AN REGIONALEM KÄSE UND SAISONALEN FRUCHTKOMPOTTEN',
-      sp_d4_name: 'WARME HAUSGEMACHTE CRÊPE MIT TRADITIONELLEM DULCE DE LECHE',
-
-      // OTOÑO: Pasos
-      step_1_title: 'ERSTER GANG',
-      dish_1_name: 'ZIEGENKÄSE · CHUTNEY · KRÄUTER',
-      dish_1_desc: 'Cremiger handwerklicher Ziegenkäse aus Mendoza, würziges Saison-Chutney und frische Gartenkräuter.',
-      wine_1_std_notes: '(Las Compuertas · Fruchtige Noten und samtige Tannine)',
-      wine_1_upg_notes: '(Ausbau in französischer Eiche · Dichte Textur und mineralische Frische)',
-
-      step_2_title: 'ZWEITER GANG',
-      dish_2_name: 'AUSTERNPILZE · KÜRBIS · NÜSSE',
-      dish_2_desc: 'Auf Rebholz gegrillte Austernpilze, samtiges Kürbispüree aus der Glut und geröstete Baumnüsse aus dem Uco-Tal.',
-      wine_2_std_notes: '(Agrelo · Schwarzer Pfeffer, süsse Paprika und elegante Struktur)',
-      wine_2_upg_notes: '(Las Compuertas · 12 Monate Barrique · Komplexität und seidiger Abgang)',
-
-      step_3_title: 'DRITTER GANG',
-      dish_3_name: 'KALBSMILKE · BLUMENKOHL · APFEL · LAMADRID OLIVENÖL',
-      dish_3_desc: 'Knusprig glasierte Kalbsmilke, samtige Blumenkohlmousseline, säuerlicher grüner Apfel und Emulsion unseres Olivenöls.',
-      wine_3_std_notes: '(Hauseigene Weissweincuvée · Lebendige Säure zur Gaumenerfrischung)',
-      wine_3_upg_notes: '(Einzellagen-Cuvée · Aromatische Balance und Fülle)',
-
-      step_4_title: 'VIERTER GANG',
-      dish_4_name: 'LOS BOCHEROS EMPANADA',
-      dish_4_badge: '(Chef-Spezialität)',
-      dish_4_desc: 'Traditionelle Empanada mit von Hand geschnittenem Rindfleisch, karamellisierten Zwiebeln, im Holzbackofen gebacken.',
-      wine_4_std_notes: '(Reife rote Beeren, Pflaume, Veilchen und ein Hauch Bourbon-Vanille)',
-      wine_4_upg_notes: '(Alte Rebanlagen · Konzentration und reine Eleganz)',
-
-      step_5_title: 'FÜNFTER GANG',
-      dish_5_name: 'ARGENTINISCHES RIBEYE-STEAK',
-      dish_5_desc: 'Edles gereiftes Rindfleisch, langsam über Quebracho-Holz und Rebschnitt gegrillt, verfeinert mit Meersalzkristallen.',
-      wine_5_std_notes: '(Kräftiger Körper, samtige Tannine und erhabener Abgang)',
-      wine_5_upg_notes: '(Der Ikonen-Wein des Hauses · Limitierte Selektion aus Ausnahme-Barriques)',
-
-      step_6_title: 'SECHSTER GANG',
-      dish_6_name: 'JOGHURT · ZITRONE',
-      dish_6_desc: 'Samtiger Bauernjoghurt, erfrischender Zitronen-Curd und Kräutergranita als Gaumen-Erfrischer.',
-
-      step_7_title: 'SIEBTER GANG',
-      dish_7_name: 'SCHOKOLADE · GRAPEFRUIT · TOFFEE · LAMADRID OLIVENÖL',
-      dish_7_desc: 'Cremige dunkle Schokolade 70%, rosa Grapefruit, gesalzenes Buttertoffee und ein feiner Faden Lamadrid Olivenöl.',
-      wine_7_std_notes: '(Pétillant Naturel · Wilde natürliche Perlage, Frische und Frucht)',
-      wine_7_upg_notes: '(Traditionelle Flaschengärung · Feine anhaltende Perlage)'
-    }
-  };
-
-  const flags = {
-    es: '🇦🇷',
-    en: '🇬🇧',
-    pt: '🇧🇷',
-    'de-ch': '🇨🇭'
-  };
-
-  const langNames = {
-    es: 'ES',
-    en: 'EN',
-    pt: 'PT',
-    'de-ch': 'CH'
-  };
-
-  let currentLang = 'es';
-  let currentSeason = 'spring'; // 'spring' | 'autumn'
-
-  // --- Course Data for Autumn Step-by-Step Mode ---
-  const coursesData = [
+  // --- 1. Menu Catalog Dataset ---
+  const MENU_CATALOG = [
+    // --- PRIMAVERA: ENTRADAS ---
     {
-      step: 1,
-      roman: 'I',
-      dishKey: 'dish_1_name',
-      descKey: 'dish_1_desc',
-      standardWine: 'Lamadrid Reserva Bonarda',
-      standardNotesKey: 'wine_1_std_notes',
-      upgradeWine: 'Lamadrid Gran Reserva Chardonnay',
-      upgradeNotesKey: 'wine_1_upg_notes'
+      id: 'sp_e1',
+      category: 'primavera-entradas',
+      courseType: 'entradas',
+      name_es: 'Espárragos a la plancha, parmesano, almendras y yema curada',
+      name_en: 'Grilled asparagus, parmesan, toasted almonds & cured yolk',
+      name_pt: 'Aspargos grelhados, parmesão, amêndoas e gema curada',
+      name_de: 'Gegrillter Spargel, Parmesan, Mandeln und gereiftes Eigelb',
+      price: 18000,
+      pairing_std: 'Lamadrid Blanc de Blancs',
+      pairing_upg: 'Lamadrid Gran Reserva Chardonnay',
+      desc: 'Almendras tostadas, gel de limón y yema curada'
     },
     {
-      step: 2,
-      roman: 'II',
-      dishKey: 'dish_2_name',
-      descKey: 'dish_2_desc',
-      standardWine: 'Peñón de Agrelo Cabernet Sauvignon',
-      standardNotesKey: 'wine_2_std_notes',
-      upgradeWine: 'Lamadrid Reserva Cabernet Sauvignon',
-      upgradeNotesKey: 'wine_2_upg_notes'
+      id: 'sp_e2',
+      category: 'primavera-entradas',
+      courseType: 'entradas',
+      name_es: 'Provoleta asada con chimichurri rojo casero',
+      name_en: 'Roasted provoleta with homemade red chimichurri',
+      name_pt: 'Provoleta assada com chimichurri vermelho caseiro',
+      name_de: 'Gegrillter Provoleta mit rotem Chimichurri',
+      price: 25000,
+      pairing_std: 'Lamadrid Terroir Selection Malbec D.O.C',
+      pairing_upg: 'Lamadrid Reserva Cabernet Sauvignon',
+      desc: 'Provoleta crocante al horno de leña con chimichurri de la casa'
     },
     {
-      step: 3,
-      roman: 'III',
-      dishKey: 'dish_3_name',
-      descKey: 'dish_3_desc',
-      standardWine: 'Los Bocheros White Blend',
-      standardNotesKey: 'wine_3_std_notes',
-      upgradeWine: 'Peñón de Agrelo Corte de Finca',
-      upgradeNotesKey: 'wine_3_upg_notes'
+      id: 'sp_e3',
+      category: 'primavera-entradas',
+      courseType: 'entradas',
+      name_es: 'Solomillo de cerdo curado al Malbec con manzana verde',
+      name_en: 'Malbec-cured pork tenderloin with green apple',
+      name_pt: 'Filé suíno curado ao Malbec com maçã verde',
+      name_de: 'In Malbec gereiftes Schweinefilet mit grünem Apfel',
+      price: 21000,
+      pairing_std: 'Lamadrid Terroir Selection Bonarda',
+      pairing_upg: 'Lamadrid Reserva Malbec',
+      desc: 'Láminas finas, manzana verde fresca y hojas verdes de huerta'
     },
     {
-      step: 4,
-      roman: 'IV',
-      dishKey: 'dish_4_name',
-      badgeKey: 'dish_4_badge',
-      tagKey: 'specialty_tag',
-      descKey: 'dish_4_desc',
-      standardWine: 'Lamadrid Reserva Malbec',
-      standardNotesKey: 'wine_4_std_notes',
-      upgradeWine: 'Lamadrid Gran Reserva Malbec',
-      upgradeNotesKey: 'wine_4_upg_notes'
+      id: 'sp_e4',
+      category: 'primavera-entradas',
+      courseType: 'entradas',
+      name_es: 'Queso de cabra, remolacha asada, yogur y frambuesas',
+      name_en: 'Goat cheese, roasted beetroot, yogurt & raspberries',
+      name_pt: 'Queijo de cabra, beterraba assada, iogurte e framboesas',
+      name_de: 'Ziegenkäse, Rande, Joghurt und Himbeeren',
+      price: 18000,
+      pairing_std: 'Lamadrid Terroir Selection Cabernet Sauvignon',
+      pairing_upg: 'Lamadrid Reserva Cabernet Sauvignon',
+      desc: 'Queso mendocino, yogur artesanal, frambuesas y crocantes'
     },
     {
-      step: 5,
-      roman: 'V',
-      dishKey: 'dish_5_name',
-      tagKey: 'main_tag',
-      descKey: 'dish_5_desc',
-      standardWine: 'Lamadrid Gran Reserva Malbec',
-      standardNotesKey: 'wine_5_std_notes',
-      upgradeWine: 'Matilde Malbec',
-      upgradeNotesKey: 'wine_5_upg_notes',
-      isIconic: true
+      id: 'sp_e5',
+      category: 'primavera-entradas',
+      courseType: 'entradas',
+      name_es: 'Especial Dúo Empanadas Los Bocheros',
+      name_en: 'Special Duo of Los Bocheros Empanadas',
+      name_pt: 'Especial Duo de Empanadas Los Bocheros',
+      name_de: 'Duo Los Bocheros Empanadas',
+      price: 16000,
+      pairing_std: 'Lamadrid Reserva Malbec',
+      pairing_upg: 'Lamadrid Gran Reserva Malbec',
+      desc: 'Cortadas a cuchillo, masa casera hojaldrada, horno de barro'
+    },
+
+    // --- PRIMAVERA: PRINCIPALES ---
+    {
+      id: 'sp_p1',
+      category: 'primavera-principales',
+      courseType: 'principales',
+      name_es: 'Costilla confitada, cremoso de papa, Morbier y panceta',
+      name_en: 'Confit short rib, creamy potato, Morbier & smoked bacon',
+      name_pt: 'Costela confitada, purê de batata, queijo Morbier e bacon',
+      name_de: 'Geschmorte Rinderrippe, Kartoffelmousseline und Morbier',
+      price: 34000,
+      pairing_std: 'Lamadrid Gran Reserva Malbec',
+      pairing_upg: 'Guillermo Cabernet Sauvignon',
+      desc: 'Cocción lenta de 14 horas con fondo de cocción reducido'
     },
     {
-      step: 6,
-      roman: 'VI',
-      dishKey: 'dish_6_name',
-      tagKey: 'cleanser_tag',
-      descKey: 'dish_6_desc',
-      isCleanser: true
+      id: 'sp_p2',
+      category: 'primavera-principales',
+      courseType: 'principales',
+      name_es: 'Pasta artesanal de hongos, arvejas y muhammara',
+      name_en: 'Handmade mushroom pasta, sweet peas & muhammara',
+      name_pt: 'Massa artesanal de cogumelos, ervilhas e muhammara',
+      name_de: 'Hausgemachte Waldpilz-Pasta mit Erbsen & Muhammara',
+      price: 29000,
+      pairing_std: 'Lamadrid Gran Reserva Cabernet Franc',
+      pairing_upg: 'Matilde Malbec (Ícono)',
+      desc: 'Arvejas tiernas, crocante especiado, base de pimientos y nueces'
     },
     {
-      step: 7,
-      roman: 'VII',
-      dishKey: 'dish_7_name',
-      tagKey: 'dessert_tag',
-      descKey: 'dish_7_desc',
-      standardWine: 'ZunZun Pet Nat',
-      standardNotesKey: 'wine_7_std_notes',
-      upgradeWine: 'Margarita Espumoso',
-      upgradeNotesKey: 'wine_7_upg_notes'
+      id: 'sp_p3',
+      category: 'primavera-principales',
+      courseType: 'principales',
+      name_es: 'Trucha a la plancha, curry de alcauciles y cuscús',
+      name_en: 'Pan-seared trout, artichoke curry & crispy couscous',
+      name_pt: 'Truta grelhada, curry de alcachofras e cuscuz',
+      name_de: 'Gebratene Anden-Forelle mit Artischocken-Curry',
+      price: 36000,
+      pairing_std: 'Lamadrid Gran Reserva Chardonnay',
+      pairing_upg: 'Begani Private Selection',
+      desc: 'Curry cremoso con ají amarillo y cuscús crocante tostado'
+    },
+    {
+      id: 'sp_p4',
+      category: 'primavera-principales',
+      courseType: 'principales',
+      name_es: 'Ojo de bife con vegetales frescos de estación',
+      name_en: 'Prime Argentine ribeye steak with sautéed vegetables',
+      name_pt: 'Ojo de bife argentino com vegetais salteados',
+      name_de: 'Argentinisches Ribeye-Steak mit Frühlingsgemüse',
+      price: 36000,
+      pairing_std: 'Lamadrid Gran Reserva Malbec',
+      pairing_upg: 'Matilde Malbec (Ícono)',
+      desc: 'Asado sobre brasas de quebracho y sarmientos de la finca',
+      isMeat: true
+    },
+
+    // --- PRIMAVERA: POSTRES ---
+    {
+      id: 'sp_d1',
+      category: 'primavera-postres',
+      courseType: 'postres',
+      name_es: 'Pera pochada, mascarpone, toffee y queso pepato',
+      name_en: 'Poached pear, mascarpone mousse & salted toffee',
+      name_pt: 'Pêra pochê, mascarpone, toffee e queijo pepato',
+      name_de: 'Pochierte Birne, Mascarpone und Salz-Toffee',
+      price: 16000,
+      pairing_std: 'ZunZun Pet Nat',
+      pairing_upg: 'Margarita Espumoso',
+      desc: 'Mousse de mascarpone, toffee fluido y crumble de almendras'
+    },
+    {
+      id: 'sp_d2',
+      category: 'primavera-postres',
+      courseType: 'postres',
+      name_es: 'Tarta flan caramelizada con helado artesanal',
+      name_en: 'Caramelized flan tart with artisanal ice cream',
+      name_pt: 'Torta pudim caramelizada com sorvete artesanal',
+      name_de: 'Karamellisierte Flan-Tarte mit hausgemachtem Glacé',
+      price: 17000,
+      pairing_std: 'ZunZun Pet Nat',
+      pairing_upg: 'Margarita Espumoso',
+      desc: 'Masa sableé crocante, centro sedoso y quenelle de helado'
+    },
+    {
+      id: 'sp_d3',
+      category: 'primavera-postres',
+      courseType: 'postres',
+      name_es: 'Selección artesanal de quesos y dulces de estación',
+      name_en: 'Artisanal cheese selection & seasonal fruit preserves',
+      name_pt: 'Seleção artesanal de queijos e doces da estação',
+      name_de: 'Auswahl an regionalem Käse und Fruchtkompotten',
+      price: 16000,
+      pairing_std: 'ZunZun Pet Nat',
+      pairing_upg: 'Margarita Espumoso',
+      desc: 'Quesos mendocinos curados y dulces caseros de la finca'
+    },
+    {
+      id: 'sp_d4',
+      category: 'primavera-postres',
+      courseType: 'postres',
+      name_es: 'Clásico panqueque casero tibio con dulce de leche',
+      name_en: 'Warm homemade crêpe with artisanal dulce de leche',
+      name_pt: 'Panqueca caseira morna com doce de leite artesanal',
+      name_de: 'Warme Crêpe mit hausgemachtem Dulce de Leche',
+      price: 18000,
+      pairing_std: 'ZunZun Pet Nat',
+      pairing_upg: 'Margarita Espumoso',
+      desc: 'Caramelizado a la manteca, dulce de leche de campo mendocino'
+    },
+
+    // --- OTOÑO: MENÚ 7 PASOS ---
+    {
+      id: 'ot_full',
+      category: 'otono-pasos',
+      courseType: 'principales',
+      name_es: 'Menú Otoño 7 Pasos Completo (Por Persona)',
+      name_en: 'Autumn 7-Course Tasting Menu (Per Person)',
+      name_pt: 'Menu Degustação Outono 7 Etapas (Por Pessoa)',
+      name_de: 'Herbst-Degustationsmenü 7 Gänge (Pro Person)',
+      price: 58000,
+      pairing_std: 'Maridaje Clásico Lamadrid (Incluido)',
+      pairing_upg: 'Maridaje Upgrade Gran Reserva & Matilde (+$18.000)',
+      desc: 'Queso de cabra, Gírgola, Molleja, Empanada, Ojo de Bife, Yogurt y Chocolate'
+    },
+    {
+      id: 'ot_p1',
+      category: 'otono-pasos',
+      courseType: 'entradas',
+      name_es: 'Paso 1: Queso de cabra, chutney y hierbas',
+      name_en: 'Course 1: Goat cheese, chutney & herbs',
+      name_pt: 'Etapa 1: Queijo de cabra, chutney e ervas',
+      name_de: 'Gang 1: Ziegenkäse, Chutney und Kräuter',
+      price: 15000,
+      pairing_std: 'Lamadrid Reserva Bonarda',
+      pairing_upg: 'Lamadrid Gran Reserva Chardonnay',
+      desc: 'Cremoso queso de cabra, chutney especiado, hierbas de huerta'
+    },
+    {
+      id: 'ot_p2',
+      category: 'otono-pasos',
+      courseType: 'entradas',
+      name_es: 'Paso 2: Gírgola al sarmiento, calabaza y nueces',
+      name_en: 'Course 2: Oyster mushroom, roasted pumpkin & walnuts',
+      name_pt: 'Etapa 2: Cogumelos gírgola, abóbora e nozes',
+      name_de: 'Gang 2: Austernpilze, Kürbis und Nüsse',
+      price: 16000,
+      pairing_std: 'Peñón de Agrelo Cabernet Sauvignon',
+      pairing_upg: 'Lamadrid Reserva Cabernet Sauvignon',
+      desc: 'Gírgolas doradas, calabaza al rescoldo y nueces del Valle de Uco'
+    },
+    {
+      id: 'ot_p3',
+      category: 'otono-pasos',
+      courseType: 'entradas',
+      name_es: 'Paso 3: Molleja crocante, coliflor, manzana y AOVE',
+      name_en: 'Course 3: Sweetbread, cauliflower, apple & EVOO',
+      name_pt: 'Etapa 3: Molejas crocantes, couve-flor e maçã',
+      name_de: 'Gang 3: Kalbsmilke, Blumenkohl und Apfel',
+      price: 20000,
+      pairing_std: 'Los Bocheros White Blend',
+      pairing_upg: 'Peñón de Agrelo Corte de Finca',
+      desc: 'Molleja glaseada, puré de coliflor tostada, manzana verde ácida'
+    },
+    {
+      id: 'ot_p5',
+      category: 'otono-pasos',
+      courseType: 'principales',
+      name_es: 'Paso 5: Ojo de Bife al quebracho blanco',
+      name_en: 'Course 5: Ribeye steak over vine shoots',
+      name_pt: 'Etapa 5: Ojo de bife na brasa',
+      name_de: 'Gang 5: Ribeye-Steak über Rebholz',
+      price: 36000,
+      pairing_std: 'Lamadrid Gran Reserva Malbec',
+      pairing_upg: 'Matilde Malbec (Ícono)',
+      desc: 'Carne argentina madurada, cristales de sal marina',
+      isMeat: true
+    },
+    {
+      id: 'ot_p7',
+      category: 'otono-pasos',
+      courseType: 'postres',
+      name_es: 'Paso 7: Chocolate amargo, pomelo, toffee y AOVE',
+      name_en: 'Course 7: Dark chocolate, grapefruit, toffee & EVOO',
+      name_pt: 'Etapa 7: Chocolate amargo, toranja e toffee',
+      name_de: 'Gang 7: Schokolade, Grapefruit und Toffee',
+      price: 16000,
+      pairing_std: 'ZunZun Pet Nat',
+      pairing_upg: 'Margarita Espumoso',
+      desc: 'Cremoso de chocolate 70%, pomelo rosado y toffee a la manteca'
+    },
+
+    // --- VINOS TINTOS LAMADRID ---
+    {
+      id: 'vn_t1',
+      category: 'vinos-tintos',
+      courseType: 'bebidas',
+      name_es: 'Lamadrid Reserva Malbec (Botella)',
+      name_en: 'Lamadrid Reserva Malbec (Bottle)',
+      name_pt: 'Lamadrid Reserva Malbec (Garrafa)',
+      name_de: 'Lamadrid Reserva Malbec (Flasche)',
+      price: 19000,
+      desc: 'Las Compuertas · Ciruela, violetas, roble sutil'
+    },
+    {
+      id: 'vn_t2',
+      category: 'vinos-tintos',
+      courseType: 'bebidas',
+      name_es: 'Lamadrid Reserva Bonarda (Botella)',
+      name_en: 'Lamadrid Reserva Bonarda (Bottle)',
+      name_pt: 'Lamadrid Reserva Bonarda (Garrafa)',
+      name_de: 'Lamadrid Reserva Bonarda (Flasche)',
+      price: 19000,
+      desc: 'Las Compuertas · Fruta roja fresca y taninos redondos'
+    },
+    {
+      id: 'vn_t3',
+      category: 'vinos-tintos',
+      courseType: 'bebidas',
+      name_es: 'Lamadrid Gran Reserva Malbec (Botella)',
+      name_en: 'Lamadrid Gran Reserva Malbec (Bottle)',
+      name_pt: 'Lamadrid Gran Reserva Malbec (Garrafa)',
+      name_de: 'Lamadrid Gran Reserva Malbec (Flasche)',
+      price: 29000,
+      desc: 'Selección de parcelas viejas de 1929 · 14 meses en roble francés'
+    },
+    {
+      id: 'vn_t4',
+      category: 'vinos-tintos',
+      courseType: 'bebidas',
+      name_es: 'Matilde Malbec · Vino Ícono (Botella)',
+      name_en: 'Matilde Malbec · Flagship Icon Wine (Bottle)',
+      name_pt: 'Matilde Malbec · Vinho Ícone (Garrafa)',
+      name_de: 'Matilde Malbec · Ikonen-Wein (Flasche)',
+      price: 65000,
+      desc: 'El vino ícono indiscutible de Lamadrid · Barricas excepcionales'
+    },
+    {
+      id: 'vn_t5',
+      category: 'vinos-tintos',
+      courseType: 'bebidas',
+      name_es: 'Guillermo Cabernet Sauvignon (Botella)',
+      name_en: 'Guillermo Cabernet Sauvignon (Bottle)',
+      name_pt: 'Guillermo Cabernet Sauvignon (Garrafa)',
+      name_de: 'Guillermo Cabernet Sauvignon (Flasche)',
+      price: 45000,
+      desc: 'Edición especial de gran estirpe y concentración'
+    },
+
+    // --- BLANCOS & BURBUJAS ---
+    {
+      id: 'vn_b1',
+      category: 'vinos-blancos-burbujas',
+      courseType: 'bebidas',
+      name_es: 'Los Bocheros White Blend (Botella)',
+      name_en: 'Los Bocheros White Blend (Bottle)',
+      name_pt: 'Los Bocheros White Blend (Garrafa)',
+      name_de: 'Los Bocheros White Blend (Flasche)',
+      price: 16000,
+      desc: 'Corte de blancas de la finca · Fresco, cítrico y mineral'
+    },
+    {
+      id: 'vn_b2',
+      category: 'vinos-blancos-burbujas',
+      courseType: 'bebidas',
+      name_es: 'Lamadrid Gran Reserva Chardonnay (Botella)',
+      name_en: 'Lamadrid Gran Reserva Chardonnay (Bottle)',
+      name_pt: 'Lamadrid Gran Reserva Chardonnay (Garrafa)',
+      name_de: 'Lamadrid Gran Reserva Chardonnay (Flasche)',
+      price: 27000,
+      desc: 'Fermentado en barricas de roble francés · Untuoso y complejo'
+    },
+    {
+      id: 'vn_b3',
+      category: 'vinos-blancos-burbujas',
+      courseType: 'bebidas',
+      name_es: 'ZunZun Pétillant Naturel Pet Nat (Botella)',
+      name_en: 'ZunZun Pétillant Naturel Pet Nat (Bottle)',
+      name_pt: 'ZunZun Pétillant Naturel Pet Nat (Garrafa)',
+      name_de: 'ZunZun Pétillant Naturel Pet Nat (Flasche)',
+      price: 19000,
+      desc: 'Burbuja natural salvaje, vivaz y sin filtrar'
+    },
+    {
+      id: 'vn_b4',
+      category: 'vinos-blancos-burbujas',
+      courseType: 'bebidas',
+      name_es: 'Margarita Espumoso Champenoise (Botella)',
+      name_en: 'Margarita Sparkling Champenoise (Bottle)',
+      name_pt: 'Margarita Espumante Champenoise (Garrafa)',
+      name_de: 'Margarita Schaumwein Champenoise (Flasche)',
+      price: 28000,
+      desc: 'Método tradicional 24 meses sobre borras · Burbuja finísima'
+    },
+
+    // --- BEBIDAS & CAFETERÍA ---
+    {
+      id: 'bb_1',
+      category: 'bebidas-cafeteria',
+      courseType: 'bebidas',
+      name_es: 'Agua Mineral Villavicencio (500ml con o sin gas)',
+      name_en: 'Villavicencio Mineral Water (500ml still or sparkling)',
+      name_pt: 'Água Mineral Villavicencio (500ml com ou sem gás)',
+      name_de: 'Mineralwasser Villavicencio (500ml)',
+      price: 3500,
+      desc: 'Agua pura de manantial de la precordillera de Mendoza'
+    },
+    {
+      id: 'bb_2',
+      category: 'bebidas-cafeteria',
+      courseType: 'bebidas',
+      name_es: 'Café Espresso o Cortado de Especialidad',
+      name_en: 'Specialty Espresso or Cortado Coffee',
+      name_pt: 'Café Espresso ou Cortado Especial',
+      name_de: 'Spezialitäten-Espresso oder Cortado',
+      price: 3200,
+      desc: 'Granos arábigos tostados artesanalmente con petit four'
     }
   ];
 
-  let currentStepIndex = 0;
+  // --- 2. Tables Dataset (16 Tables in 4 Sectors) ---
+  const SECTORS = [
+    { id: 'terraza', name: 'Terraza Viñedos', tables: [1, 2, 3, 4, 5] },
+    { id: 'galeria', name: 'Galería Adobe', tables: [6, 7, 8, 9, 10] },
+    { id: 'salon', name: 'Salón Barricas', tables: [11, 12, 13, 14] },
+    { id: 'pergola', name: 'Pérgola Las Compuertas', tables: [15, 16] }
+  ];
 
-  // --- Elements ---
-  const seasonTabs = document.querySelectorAll('.season-tab-btn');
-  const heroImg = document.getElementById('hero-img');
-  const heroSeasonTag = document.getElementById('hero-season-tag');
-  const heroMenuTitle = document.getElementById('hero-menu-title');
-  const heroTypeBadge = document.getElementById('hero-type-badge');
-  const menuSpringSection = document.getElementById('menu-spring-section');
-  const menuAutumnSection = document.getElementById('menu-autumn-section');
+  // Initialize table state from localStorage or defaults
+  let tablesState = {};
+  const savedTables = localStorage.getItem('bocheros_tables_v1');
+  if (savedTables) {
+    try {
+      tablesState = JSON.parse(savedTables);
+    } catch (e) {
+      tablesState = {};
+    }
+  }
 
-  const langMenuBtn = document.getElementById('lang-menu-btn');
-  const langDropdown = document.getElementById('lang-dropdown');
-  const langOpts = document.querySelectorAll('.lang-opt');
-  const activeFlag = document.getElementById('active-flag');
-  const activeLangText = document.getElementById('active-lang-text');
+  // Ensure all 16 tables exist
+  for (let i = 1; i <= 16; i++) {
+    if (!tablesState[i]) {
+      const sectorObj = SECTORS.find(s => s.tables.includes(i));
+      tablesState[i] = {
+        id: i,
+        name: `Mesa ${i}`,
+        sector: sectorObj ? sectorObj.name : 'General',
+        diners: 2,
+        status: i === 1 ? 'busy' : 'free', // 'free' | 'busy' | 'sent' | 'bill'
+        items: [],
+        openedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        sentAt: null,
+        mozo: localStorage.getItem('bocheros_mozo_name') || 'Mozo Máximo'
+      };
+    }
+  }
 
-  const filterChips = document.querySelectorAll('.filter-chip');
-  const printMenuBtn = document.getElementById('print-menu-btn');
+  function saveTablesState() {
+    localStorage.setItem('bocheros_tables_v1', JSON.stringify(tablesState));
+    updateTopIndicators();
+  }
 
-  const viewCardModeBtn = document.getElementById('view-card-mode');
-  const viewStepModeBtn = document.getElementById('view-step-mode');
-  const autumnParchmentSheet = document.getElementById('autumn-parchment-sheet');
-  const stepNavigator = document.getElementById('step-navigator');
-  const activeStepIndicator = document.getElementById('active-step-indicator');
-  const stepDotsContainer = document.getElementById('step-dots-container');
-  const stepSlideDisplay = document.getElementById('step-slide-display');
-  const prevStepBtn = document.getElementById('prev-step-btn');
-  const nextStepBtn = document.getElementById('next-step-btn');
-  const scrollToMenuBtn = document.getElementById('scroll-to-menu-btn');
+  // Active Selected Table
+  let activeTableId = 1;
+  let activeMozo = localStorage.getItem('bocheros_mozo_name') || 'Mozo Máximo';
+  let activeLang = 'es';
+  let activeCategory = 'primavera-entradas';
 
-  // --- Season Switching ---
-  function setSeason(season) {
-    currentSeason = season;
-    document.body.setAttribute('data-active-season', season);
+  // Modal temporary customization buffer
+  let customizingItem = null;
 
-    seasonTabs.forEach(tab => {
-      const isMatch = tab.getAttribute('data-season') === season;
-      tab.classList.toggle('active', isMatch);
-      tab.setAttribute('aria-selected', isMatch ? 'true' : 'false');
-    });
+  // --- 3. DOM Elements ---
+  const activeTableIndicator = document.getElementById('active-table-indicator');
+  const activeSectorLabel = document.getElementById('active-sector-label');
+  const activeDinersCount = document.getElementById('active-diners-count');
+  const activeTableStatus = document.getElementById('active-table-status');
+  const displayMozoName = document.getElementById('display-mozo-name');
+  const cartItemCount = document.getElementById('cart-item-count');
+  const cartTotalBadge = document.getElementById('cart-total-badge');
+  const occupiedTablesCount = document.getElementById('occupied-tables-count');
 
-    const t = translations[currentLang];
+  // Navigation Segments
+  const tabCatalog = document.getElementById('tab-catalog');
+  const tabTables = document.getElementById('tab-tables');
+  const tabComanda = document.getElementById('tab-comanda');
+  const viewCatalog = document.getElementById('view-catalog');
+  const viewTables = document.getElementById('view-tables');
+  const viewComanda = document.getElementById('view-comanda');
 
-    if (season === 'spring') {
-      heroImg.src = 'assets/los-bocheros-spring.jpg';
-      heroImg.alt = 'Terrazas primaverales de Los Bocheros Restó y viñedos';
-      heroSeasonTag.textContent = t.spring_hero_tag;
-      heroMenuTitle.textContent = t.spring_hero_title;
-      heroTypeBadge.textContent = t.spring_hero_type;
+  // Catalog Elements
+  const menuItemsContainer = document.getElementById('menu-items-container');
+  const catalogSearchInput = document.getElementById('catalog-search-input');
+  const clearSearchBtn = document.getElementById('clear-search-btn');
+  const catChips = document.querySelectorAll('.cat-chip');
 
-      menuSpringSection.style.display = 'block';
-      menuAutumnSection.style.display = 'none';
+  // Comanda Elements
+  const comandaTableTitle = document.getElementById('comanda-table-title');
+  const comandaMozoTag = document.getElementById('comanda-mozo-tag');
+  const comandaTimeTag = document.getElementById('comanda-time-tag');
+  const comandaDinersTag = document.getElementById('comanda-diners-tag');
+  const comandaStatusPill = document.getElementById('comanda-status-pill');
+  const comandaItemsList = document.getElementById('comanda-items-list');
+  const comandaEmpty = document.getElementById('comanda-empty');
+  const comandaSummaryBox = document.getElementById('comanda-summary-box');
+  const comandaSubtotalVal = document.getElementById('comanda-subtotal-val');
+  const comandaTipVal = document.getElementById('comanda-tip-val');
+  const comandaTotalVal = document.getElementById('comanda-total-val');
+  const includeTipCheck = document.getElementById('include-tip-check');
+
+  // Action Buttons
+  const btnMarcharCocina = document.getElementById('btn-marchar-cocina');
+  const btnWhatsappComanda = document.getElementById('btn-whatsapp-comanda');
+  const btnPrintBill = document.getElementById('btn-print-bill');
+  const btnCerrarMesa = document.getElementById('btn-cerrar-mesa');
+  const btnEmptyGoCatalog = document.getElementById('btn-empty-go-catalog');
+
+  // Language Popover
+  const langBtn = document.getElementById('lang-btn');
+  const langPopover = document.getElementById('lang-popover');
+  const curLangFlag = document.getElementById('cur-lang-flag');
+  const curLangLabel = document.getElementById('cur-lang-label');
+  const langChoices = document.querySelectorAll('.lang-choice');
+
+  // Modals
+  const customDishModal = document.getElementById('custom-dish-modal');
+  const customModalTitle = document.getElementById('custom-modal-title');
+  const customModalPrice = document.getElementById('custom-modal-price');
+  const donenessSection = document.getElementById('doneness-section');
+  const pairStdName = document.getElementById('pair-std-name');
+  const pairUpgName = document.getElementById('pair-upg-name');
+  const customDishNotes = document.getElementById('custom-dish-notes');
+  const customModalClose = document.getElementById('custom-modal-close');
+  const customModalCancel = document.getElementById('custom-modal-cancel');
+  const customModalSave = document.getElementById('custom-modal-save');
+
+  // QR Modal
+  const connectPhoneBtn = document.getElementById('connect-phone-btn');
+  const qrConnectModal = document.getElementById('qr-connect-modal');
+  const qrModalClose = document.getElementById('qr-modal-close');
+  const qrModalDone = document.getElementById('qr-modal-done');
+  const qrContainer = document.getElementById('qr-container');
+  const btnCopyIp = document.getElementById('btn-copy-ip');
+
+  // Profile Modal
+  const mozoProfileBtn = document.getElementById('mozo-profile-btn');
+  const editDinersBtn = document.getElementById('edit-diners-btn');
+  const mozoProfileModal = document.getElementById('mozo-profile-modal');
+  const profileModalClose = document.getElementById('profile-modal-close');
+  const profileModalSave = document.getElementById('profile-modal-save');
+  const inputMozoName = document.getElementById('input-mozo-name');
+  const displayDinersNum = document.getElementById('display-diners-num');
+  const btnDecDiners = document.getElementById('btn-dec-diners');
+  const btnIncDiners = document.getElementById('btn-inc-diners');
+
+  // Sound
+  function playSoundChime() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(587.33, ctx.currentTime); // D5
+      osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.15); // A5
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.5);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.5);
+    } catch (e) {
+      // Audio fallback
+    }
+  }
+
+  // --- 4. Switch Views ---
+  function switchView(viewName) {
+    [tabCatalog, tabTables, tabComanda].forEach(t => t.classList.remove('active'));
+    [viewCatalog, viewTables, viewComanda].forEach(v => v.style.display = 'none');
+
+    if (viewName === 'catalog') {
+      tabCatalog.classList.add('active');
+      viewCatalog.style.display = 'flex';
+    } else if (viewName === 'tables') {
+      tabTables.classList.add('active');
+      viewTables.style.display = 'flex';
+      renderTablesMap();
+    } else if (viewName === 'comanda') {
+      tabComanda.classList.add('active');
+      viewComanda.style.display = 'flex';
+      renderComandaView();
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabCatalog.addEventListener('click', () => switchView('catalog'));
+  tabTables.addEventListener('click', () => switchView('tables'));
+  tabComanda.addEventListener('click', () => switchView('comanda'));
+  document.getElementById('open-tables-map-btn').addEventListener('click', () => switchView('tables'));
+  document.getElementById('view-comanda-btn').addEventListener('click', () => switchView('comanda'));
+  if (btnEmptyGoCatalog) {
+    btnEmptyGoCatalog.addEventListener('click', () => switchView('catalog'));
+  }
+
+  // --- 5. Formatters ---
+  function formatMoney(amount) {
+    return '$' + amount.toLocaleString('es-AR');
+  }
+
+  // --- 6. Top Indicators Update ---
+  function updateTopIndicators() {
+    const table = tablesState[activeTableId];
+    if (!table) return;
+
+    activeTableIndicator.textContent = table.name;
+    activeSectorLabel.textContent = table.sector;
+    activeDinersCount.textContent = `${table.diners} comensales`;
+    displayMozoName.textContent = activeMozo;
+
+    // Table state pill
+    activeTableStatus.className = 'table-state-tag';
+    if (table.status === 'free') {
+      activeTableStatus.classList.add('state-free');
+      activeTableStatus.textContent = 'Mesa Libre';
+    } else if (table.status === 'sent') {
+      activeTableStatus.classList.add('state-sent');
+      activeTableStatus.textContent = 'Enviada a Cocina';
     } else {
-      heroImg.src = 'assets/los-bocheros-hero.jpg';
-      heroImg.alt = 'Terrazas otoñales de Los Bocheros Restó y viñedos dorados';
-      heroSeasonTag.textContent = t.autumn_hero_tag;
-      heroMenuTitle.textContent = t.autumn_hero_title;
-      heroTypeBadge.textContent = t.autumn_hero_type;
-
-      menuSpringSection.style.display = 'none';
-      menuAutumnSection.style.display = 'block';
-      renderStepSlide(currentStepIndex);
+      activeTableStatus.classList.add('state-active');
+      activeTableStatus.textContent = 'En Curso';
     }
+
+    // Cart pill
+    const count = table.items.reduce((acc, item) => acc + item.qty, 0);
+    const total = table.items.reduce((acc, item) => acc + (item.price * item.qty), 0);
+    cartItemCount.textContent = count;
+    cartTotalBadge.textContent = formatMoney(total);
+
+    // Occupied count
+    const occupied = Object.values(tablesState).filter(t => t.items.length > 0 || t.status !== 'free').length;
+    occupiedTablesCount.textContent = occupied;
   }
 
-  seasonTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      setSeason(tab.getAttribute('data-season'));
-    });
-  });
+  // --- 7. Catalog Rendering ---
+  function renderCatalog() {
+    const table = tablesState[activeTableId];
+    const searchQuery = catalogSearchInput.value.toLowerCase().trim();
 
-  // --- Language Switching ---
-  function updateLanguage(lang) {
-    currentLang = lang;
-    const t = translations[lang];
+    let items = MENU_CATALOG;
 
-    // Update Flag & Code in button
-    activeFlag.textContent = flags[lang];
-    activeLangText.textContent = langNames[lang];
-
-    // Update active class in dropdown options
-    langOpts.forEach(opt => {
-      opt.classList.toggle('active', opt.getAttribute('data-lang') === lang);
-    });
-
-    // Update all data-i18n elements
-    document.querySelectorAll('[data-i18n]').forEach(el => {
-      const key = el.getAttribute('data-i18n');
-      if (t[key]) {
-        el.textContent = t[key];
-      }
-    });
-
-    // Update dynamic season texts on hero
-    if (currentSeason === 'spring') {
-      heroSeasonTag.textContent = t.spring_hero_tag;
-      heroMenuTitle.textContent = t.spring_hero_title;
-      heroTypeBadge.textContent = t.spring_hero_type;
+    if (searchQuery) {
+      items = items.filter(i => 
+        i.name_es.toLowerCase().includes(searchQuery) ||
+        i.name_en.toLowerCase().includes(searchQuery) ||
+        (i.desc && i.desc.toLowerCase().includes(searchQuery)) ||
+        (i.pairing_std && i.pairing_std.toLowerCase().includes(searchQuery)) ||
+        (i.pairing_upg && i.pairing_upg.toLowerCase().includes(searchQuery))
+      );
     } else {
-      heroSeasonTag.textContent = t.autumn_hero_tag;
-      heroMenuTitle.textContent = t.autumn_hero_title;
-      heroTypeBadge.textContent = t.autumn_hero_type;
+      items = items.filter(i => i.category === activeCategory);
     }
 
-    renderStepSlide(currentStepIndex);
-  }
+    menuItemsContainer.innerHTML = '';
 
-  // Toggle Dropdown
-  langMenuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const isOpen = langDropdown.classList.contains('show');
-    langDropdown.classList.toggle('show', !isOpen);
-    langMenuBtn.classList.toggle('open', !isOpen);
-    langMenuBtn.setAttribute('aria-expanded', !isOpen ? 'true' : 'false');
-  });
-
-  document.addEventListener('click', () => {
-    langDropdown.classList.remove('show');
-    langMenuBtn.classList.remove('open');
-    langMenuBtn.setAttribute('aria-expanded', 'false');
-  });
-
-  langOpts.forEach(opt => {
-    opt.addEventListener('click', () => {
-      const chosenLang = opt.getAttribute('data-lang');
-      updateLanguage(chosenLang);
-      langDropdown.classList.remove('show');
-      langMenuBtn.classList.remove('open');
-      langMenuBtn.setAttribute('aria-expanded', 'false');
-    });
-  });
-
-  // --- Pairing Filters ---
-  filterChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-      filterChips.forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-
-      const filterType = chip.getAttribute('data-filter');
-      if (filterType === 'all') {
-        document.body.removeAttribute('data-active-filter');
-      } else {
-        document.body.setAttribute('data-active-filter', filterType);
-      }
-    });
-  });
-
-  // --- View Mode Toggling (Autumn 7 Pasos Card vs. Step-by-Step) ---
-  if (viewCardModeBtn && viewStepModeBtn) {
-    viewCardModeBtn.addEventListener('click', () => {
-      viewCardModeBtn.classList.add('active');
-      viewStepModeBtn.classList.remove('active');
-      autumnParchmentSheet.style.display = 'block';
-      stepNavigator.style.display = 'none';
-    });
-
-    viewStepModeBtn.addEventListener('click', () => {
-      viewStepModeBtn.classList.add('active');
-      viewCardModeBtn.classList.remove('active');
-      autumnParchmentSheet.style.display = 'none';
-      stepNavigator.style.display = 'block';
-      renderStepSlide(currentStepIndex);
-    });
-  }
-
-  // --- Step-by-Step Interactive Navigator (Autumn) ---
-  function initStepDots() {
-    if (!stepDotsContainer) return;
-    stepDotsContainer.innerHTML = '';
-    coursesData.forEach((_, idx) => {
-      const dot = document.createElement('div');
-      dot.className = `step-dot ${idx === currentStepIndex ? 'active' : ''}`;
-      dot.setAttribute('title', `Paso ${idx + 1}`);
-      dot.addEventListener('click', () => {
-        currentStepIndex = idx;
-        renderStepSlide(currentStepIndex);
-      });
-      stepDotsContainer.appendChild(dot);
-    });
-  }
-
-  function renderStepSlide(idx) {
-    if (!stepSlideDisplay) return;
-    const t = translations[currentLang];
-    const item = coursesData[idx];
-
-    // Indicator
-    if (activeStepIndicator) {
-      if (currentLang === 'es') activeStepIndicator.textContent = `Paso ${idx + 1} de ${coursesData.length}`;
-      else if (currentLang === 'en') activeStepIndicator.textContent = `Course ${idx + 1} of ${coursesData.length}`;
-      else if (currentLang === 'pt') activeStepIndicator.textContent = `Etapa ${idx + 1} de ${coursesData.length}`;
-      else activeStepIndicator.textContent = `Gang ${idx + 1} von ${coursesData.length}`;
-    }
-
-    // Dots
-    document.querySelectorAll('.step-dot').forEach((dot, dotIdx) => {
-      dot.classList.toggle('active', dotIdx === idx);
-    });
-
-    if (prevStepBtn) prevStepBtn.disabled = idx === 0;
-    if (nextStepBtn) nextStepBtn.disabled = idx === coursesData.length - 1;
-
-    let pairingsHTML = '';
-    if (item.isCleanser) {
-      pairingsHTML = `
-        <div class="dish-pairings-note">
-          <span class="cleanser-text">${t.cleanser_info}</span>
+    if (items.length === 0) {
+      menuItemsContainer.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: #888;">
+          <p>No se encontraron platos o vinos para esta búsqueda.</p>
         </div>
       `;
-    } else {
-      pairingsHTML = `
-        <div class="dish-pairings">
-          <div class="pairing-row standard-pairing">
-            <span class="pairing-badge standard-badge">${t.badge_pairing}</span>
-            <span class="wine-name">${item.standardWine}</span>
-            <span class="wine-notes">${t[item.standardNotesKey] || ''}</span>
-          </div>
-          <div class="pairing-row upgrade-pairing ${item.isIconic ? 'iconic-wine' : ''}">
-            <span class="pairing-badge upgrade-badge ${item.isIconic ? 'icon-flag' : ''}">
-              ${item.isIconic ? t.badge_iconic : t.badge_upgrade}
-            </span>
-            <span class="wine-name">${item.upgradeWine}</span>
-            <span class="wine-notes">${t[item.upgradeNotesKey] || ''}</span>
-          </div>
-        </div>
-      `;
+      return;
     }
 
-    const tagHTML = item.tagKey 
-      ? `<span class="specialty-ribbon">${t[item.tagKey]}</span>` 
-      : '';
+    items.forEach(dish => {
+      // Current quantity in active table's order
+      const existingItems = table.items.filter(i => i.dishId === dish.id);
+      const currentQty = existingItems.reduce((acc, i) => acc + i.qty, 0);
 
-    const badgeHTML = item.badgeKey 
-      ? `<span class="chef-badge">${t[item.badgeKey]}</span>` 
-      : '';
+      // Name according to active language
+      let dishName = dish.name_es;
+      if (activeLang === 'en') dishName = dish.name_en;
+      else if (activeLang === 'pt') dishName = dish.name_pt;
+      else if (activeLang === 'de-ch') dishName = dish.name_de;
 
-    stepSlideDisplay.innerHTML = `
-      <div class="course-item active-slide" style="padding: 1rem 0;">
-        <div class="course-step-tag">
-          <span class="step-roman">${item.roman}</span>
-          <span class="step-name">${t[`step_${item.step}_title`]}</span>
-          ${tagHTML}
-        </div>
-        <div class="course-body">
-          <div class="title-with-badge">
-            <h3 class="dish-title">${t[item.dishKey]}</h3>
-            ${badgeHTML}
+      const card = document.createElement('div');
+      card.className = `dish-card ${currentQty > 0 ? 'in-order' : ''}`;
+
+      let pairingsHTML = '';
+      if (dish.pairing_std) {
+        pairingsHTML = `
+          <div class="dish-card-pairings">
+            <div class="pair-line">
+              <span class="pair-badge badge-s">Clásico</span>
+              <span>${dish.pairing_std}</span>
+            </div>
+            ${dish.pairing_upg ? `
+            <div class="pair-line">
+              <span class="pair-badge badge-u">Upgrade</span>
+              <span>${dish.pairing_upg}</span>
+            </div>
+            ` : ''}
           </div>
-          <p class="dish-description" style="font-size: 1.15rem; margin: 0.8rem 0 1.2rem;">
-            ${t[item.descKey]}
-          </p>
+        `;
+      }
+
+      card.innerHTML = `
+        <div>
+          <div class="dish-card-header">
+            <h4 class="dish-card-title">${dishName}</h4>
+            <span class="dish-card-price">${formatMoney(dish.price)}</span>
+          </div>
+          ${dish.desc ? `<p class="dish-card-desc">${dish.desc}</p>` : ''}
           ${pairingsHTML}
         </div>
-      </div>
-    `;
-  }
+        <div class="dish-card-actions">
+          <button class="customize-trigger-btn" data-dish-id="${dish.id}">
+            <span>⚙️</span> Personalizar
+          </button>
+          <div class="quantity-stepper">
+            <button class="step-btn dec-btn" data-dish-id="${dish.id}">-</button>
+            <span class="quantity-display">${currentQty}</span>
+            <button class="step-btn inc-btn" data-dish-id="${dish.id}">+</button>
+          </div>
+        </div>
+      `;
 
-  if (prevStepBtn) {
-    prevStepBtn.addEventListener('click', () => {
-      if (currentStepIndex > 0) {
-        currentStepIndex--;
-        renderStepSlide(currentStepIndex);
-      }
+      // Event listeners for Stepper
+      const incBtn = card.querySelector('.inc-btn');
+      const decBtn = card.querySelector('.dec-btn');
+      const custBtn = card.querySelector('.customize-trigger-btn');
+
+      incBtn.addEventListener('click', () => {
+        addItemToTable(dish.id, 1);
+        playSoundChime();
+        renderCatalog();
+        saveTablesState();
+      });
+
+      decBtn.addEventListener('click', () => {
+        removeItemFromTable(dish.id, 1);
+        renderCatalog();
+        saveTablesState();
+      });
+
+      custBtn.addEventListener('click', () => {
+        openCustomizationModal(dish);
+      });
+
+      menuItemsContainer.appendChild(card);
     });
   }
 
-  if (nextStepBtn) {
-    nextStepBtn.addEventListener('click', () => {
-      if (currentStepIndex < coursesData.length - 1) {
-        currentStepIndex++;
-        renderStepSlide(currentStepIndex);
-      }
+  // Category filter clicks
+  catChips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      catChips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      activeCategory = chip.getAttribute('data-category');
+      catalogSearchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      renderCatalog();
     });
-  }
+  });
 
-  // --- Print Menu Functionality ---
-  printMenuBtn.addEventListener('click', () => {
-    // If in autumn and in step mode, switch to full card before printing
-    if (currentSeason === 'autumn' && autumnParchmentSheet && autumnParchmentSheet.style.display === 'none') {
-      autumnParchmentSheet.style.display = 'block';
-      stepNavigator.style.display = 'none';
-      viewCardModeBtn.classList.add('active');
-      viewStepModeBtn.classList.remove('active');
+  // Search filter
+  catalogSearchInput.addEventListener('input', () => {
+    clearSearchBtn.style.display = catalogSearchInput.value ? 'block' : 'none';
+    renderCatalog();
+  });
+
+  clearSearchBtn.addEventListener('click', () => {
+    catalogSearchInput.value = '';
+    clearSearchBtn.style.display = 'none';
+    renderCatalog();
+  });
+
+  // --- 8. Table Order Mutations ---
+  function addItemToTable(dishId, qty = 1, options = {}) {
+    const table = tablesState[activeTableId];
+    const dish = MENU_CATALOG.find(d => d.id === dishId);
+    if (!dish) return;
+
+    if (table.status === 'free') {
+      table.status = 'busy';
     }
+
+    // Find if identical option already exists
+    const match = table.items.find(i => 
+      i.dishId === dishId &&
+      i.doneness === (options.doneness || null) &&
+      i.pairing === (options.pairing || 'none') &&
+      i.notes === (options.notes || '') &&
+      JSON.stringify(i.tags || []) === JSON.stringify(options.tags || [])
+    );
+
+    if (match) {
+      match.qty += qty;
+    } else {
+      table.items.push({
+        uid: Date.now() + Math.random().toString(36).substr(2, 4),
+        dishId: dish.id,
+        name: dish.name_es,
+        courseType: dish.courseType,
+        price: dish.price,
+        qty: qty,
+        doneness: options.doneness || null,
+        pairing: options.pairing || 'none',
+        pairingName: options.pairingName || null,
+        tags: options.tags || [],
+        notes: options.notes || '',
+        addedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+    }
+
+    saveTablesState();
+  }
+
+  function removeItemFromTable(dishId, qty = 1) {
+    const table = tablesState[activeTableId];
+    const index = table.items.findIndex(i => i.dishId === dishId);
+    if (index === -1) return;
+
+    if (table.items[index].qty > qty) {
+      table.items[index].qty -= qty;
+    } else {
+      table.items.splice(index, 1);
+    }
+
+    if (table.items.length === 0) {
+      table.status = 'busy';
+    }
+
+    saveTablesState();
+  }
+
+  function deleteItemByUid(uid) {
+    const table = tablesState[activeTableId];
+    table.items = table.items.filter(i => i.uid !== uid);
+    saveTablesState();
+    renderComandaView();
+    renderCatalog();
+  }
+
+  // --- 9. Customization Modal ---
+  function openCustomizationModal(dish) {
+    customizingItem = dish;
+    customModalTitle.textContent = dish.name_es;
+    customModalPrice.textContent = formatMoney(dish.price);
+
+    // Doneness visibility (for meat)
+    if (dish.isMeat) {
+      donenessSection.style.display = 'flex';
+    } else {
+      donenessSection.style.display = 'none';
+    }
+
+    // Pairings
+    if (dish.pairing_std) {
+      pairStdName.textContent = dish.pairing_std;
+      document.getElementById('pair-opt-standard').style.display = 'flex';
+    } else {
+      document.getElementById('pair-opt-standard').style.display = 'none';
+    }
+
+    if (dish.pairing_upg) {
+      pairUpgName.textContent = dish.pairing_upg;
+      document.getElementById('pair-opt-upgrade').style.display = 'flex';
+    } else {
+      document.getElementById('pair-opt-upgrade').style.display = 'none';
+    }
+
+    // Reset fields
+    document.querySelectorAll('.pill-opt').forEach((p, idx) => {
+      p.classList.toggle('active', idx === 1);
+    });
+    document.querySelectorAll('.p-card').forEach((c, idx) => {
+      c.classList.toggle('active', idx === 0);
+    });
+    document.querySelectorAll('.tag-toggle').forEach(t => t.classList.remove('active'));
+    customDishNotes.value = '';
+
+    customDishModal.style.display = 'flex';
+  }
+
+  customModalClose.addEventListener('click', () => customDishModal.style.display = 'none');
+  customModalCancel.addEventListener('click', () => customDishModal.style.display = 'none');
+
+  // Pill selectors
+  document.querySelectorAll('.pill-opt').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.pill-opt').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.p-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.p-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    });
+  });
+
+  document.querySelectorAll('.tag-toggle').forEach(tag => {
+    tag.addEventListener('click', () => tag.classList.toggle('active'));
+  });
+
+  customModalSave.addEventListener('click', () => {
+    if (!customizingItem) return;
+
+    let doneness = null;
+    if (customizingItem.isMeat) {
+      const activeDoneness = document.querySelector('.pill-opt.active');
+      if (activeDoneness) doneness = activeDoneness.getAttribute('data-doneness');
+    }
+
+    const activePairCard = document.querySelector('.p-card.active');
+    const pairing = activePairCard ? activePairCard.getAttribute('data-pairing') : 'none';
+    let pairingName = null;
+    if (pairing === 'standard') pairingName = customizingItem.pairing_std;
+    else if (pairing === 'upgrade') pairingName = customizingItem.pairing_upg;
+
+    const tags = Array.from(document.querySelectorAll('.tag-toggle.active')).map(t => t.getAttribute('data-tag'));
+    const notes = customDishNotes.value.trim();
+
+    addItemToTable(customizingItem.id, 1, {
+      doneness,
+      pairing,
+      pairingName,
+      tags,
+      notes
+    });
+
+    playSoundChime();
+    customDishModal.style.display = 'none';
+    renderCatalog();
+    saveTablesState();
+  });
+
+  // --- 10. Tables Map View Rendering ---
+  function renderTablesMap() {
+    SECTORS.forEach(sec => {
+      const grid = document.getElementById(`sector-${sec.id}-grid`);
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      sec.tables.forEach(tableNum => {
+        const t = tablesState[tableNum];
+        const card = document.createElement('div');
+        card.className = `table-card status-${t.status} ${tableNum === activeTableId ? 'active-selected' : ''}`;
+
+        const total = t.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+        let badgeText = 'Libre';
+        if (t.status === 'busy') badgeText = 'Con Pedido';
+        else if (t.status === 'sent') badgeText = 'En Cocina';
+        else if (t.status === 'bill') badgeText = 'Cuenta Pedida';
+
+        card.innerHTML = `
+          <span class="tbl-num">Mesa ${t.id}</span>
+          <span class="tbl-badge ${t.status}">${badgeText}</span>
+          <span class="tbl-diners">👥 ${t.diners} comensales</span>
+          <span class="tbl-total">${total > 0 ? formatMoney(total) : '$0'}</span>
+        `;
+
+        card.addEventListener('click', () => {
+          activeTableId = t.id;
+          saveTablesState();
+          switchView('catalog');
+          renderCatalog();
+        });
+
+        grid.appendChild(card);
+      });
+    });
+  }
+
+  // --- 11. Comanda View Rendering ---
+  function renderComandaView() {
+    const table = tablesState[activeTableId];
+    comandaTableTitle.textContent = `${table.name} · ${table.sector}`;
+    comandaMozoTag.textContent = `Mozo: ${table.mozo || activeMozo}`;
+    comandaTimeTag.textContent = `Abierta: ${table.openedAt}`;
+    comandaDinersTag.textContent = `${table.diners} personas`;
+
+    comandaStatusPill.className = 'state-pill';
+    if (table.status === 'sent') {
+      comandaStatusPill.classList.add('state-pill-sent');
+      comandaStatusPill.textContent = 'Enviada a Cocina';
+    } else {
+      comandaStatusPill.classList.add('state-pill-active');
+      comandaStatusPill.textContent = 'En Curso';
+    }
+
+    if (table.items.length === 0) {
+      comandaEmpty.style.display = 'flex';
+      comandaItemsList.style.display = 'none';
+      comandaSummaryBox.style.display = 'none';
+      return;
+    }
+
+    comandaEmpty.style.display = 'none';
+    comandaItemsList.style.display = 'flex';
+    comandaSummaryBox.style.display = 'flex';
+
+    // Group items by course
+    const courseLabels = {
+      entradas: '1° TIEMPO · ENTRADAS',
+      principales: '2° TIEMPO · PRINCIPALES',
+      postres: '3° TIEMPO · POSTRES',
+      bebidas: 'VINOS & BEBIDAS'
+    };
+
+    const grouped = {
+      entradas: [],
+      principales: [],
+      postres: [],
+      bebidas: []
+    };
+
+    table.items.forEach(item => {
+      const c = item.courseType || 'principales';
+      if (grouped[c]) grouped[c].push(item);
+      else grouped.principales.push(item);
+    });
+
+    comandaItemsList.innerHTML = '';
+
+    Object.keys(grouped).forEach(courseKey => {
+      const items = grouped[courseKey];
+      if (items.length === 0) return;
+
+      const groupDiv = document.createElement('div');
+      groupDiv.className = 'comanda-course-group';
+      groupDiv.innerHTML = `<h4 class="comanda-course-title">${courseLabels[courseKey]}</h4>`;
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'comanda-item-row';
+
+        let tagsHTML = '';
+        if (item.doneness) tagsHTML += `<span class="c-tag meat">${item.doneness}</span>`;
+        if (item.pairingName) tagsHTML += `<span class="c-tag pairing">🍷 ${item.pairingName}</span>`;
+        if (item.tags) {
+          item.tags.forEach(t => tagsHTML += `<span class="c-tag allergy">${t}</span>`);
+        }
+        if (item.notes) tagsHTML += `<span class="c-tag note">📝 "${item.notes}"</span>`;
+
+        row.innerHTML = `
+          <div class="comanda-item-info">
+            <span class="c-item-name">${item.qty}x ${item.name}</span>
+            <div class="c-item-mods">${tagsHTML}</div>
+          </div>
+          <div class="comanda-item-controls">
+            <span class="c-item-total">${formatMoney(item.price * item.qty)}</span>
+            <button class="c-del-btn" data-uid="${item.uid}" title="Eliminar ítem">🗑️</button>
+          </div>
+        `;
+
+        row.querySelector('.c-del-btn').addEventListener('click', () => {
+          deleteItemByUid(item.uid);
+        });
+
+        groupDiv.appendChild(row);
+      });
+
+      comandaItemsList.appendChild(groupDiv);
+    });
+
+    // Summary calculation
+    const subtotal = table.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+    const hasTip = includeTipCheck.checked;
+    const tip = hasTip ? Math.round(subtotal * 0.1) : 0;
+    const total = subtotal + tip;
+
+    comandaSubtotalVal.textContent = formatMoney(subtotal);
+    comandaTipVal.textContent = formatMoney(tip);
+    comandaTotalVal.textContent = formatMoney(total);
+  }
+
+  includeTipCheck.addEventListener('change', renderComandaView);
+
+  // --- 12. Actions: Marchar Cocina, WhatsApp, Print, Cerrar ---
+  btnMarcharCocina.addEventListener('click', () => {
+    const table = tablesState[activeTableId];
+    if (table.items.length === 0) {
+      alert('La comanda está vacía. Agrega platos antes de marchar a cocina.');
+      return;
+    }
+    table.status = 'sent';
+    table.sentAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    playSoundChime();
+    saveTablesState();
+    renderComandaView();
+    alert(`¡Comanda de ${table.name} marchada a Cocina a las ${table.sentAt}! 🔔`);
+  });
+
+  btnWhatsappComanda.addEventListener('click', () => {
+    const table = tablesState[activeTableId];
+    if (table.items.length === 0) {
+      alert('La comanda está vacía.');
+      return;
+    }
+
+    const subtotal = table.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+    const tip = includeTipCheck.checked ? Math.round(subtotal * 0.1) : 0;
+    const total = subtotal + tip;
+
+    let msg = `🍷 *COMANDA · LOS BOCHEROS RESTÓ*\n`;
+    msg += `📍 *${table.name.toUpperCase()}* (${table.sector})\n`;
+    msg += `🤵 *Mozo:* ${table.mozo || activeMozo}\n`;
+    msg += `👥 *Comensales:* ${table.diners} | 🕒 *Hora:* ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\n`;
+    msg += `--------------------------------\n`;
+
+    const courseLabels = {
+      entradas: '🥗 *ENTRADAS:*',
+      principales: '🥩 *PRINCIPALES:*',
+      postres: '🍰 *POSTRES:*',
+      bebidas: '🍾 *BEBIDAS & VINOS:*'
+    };
+
+    ['entradas', 'principales', 'postres', 'bebidas'].forEach(cKey => {
+      const items = table.items.filter(i => i.courseType === cKey);
+      if (items.length > 0) {
+        msg += `\n${courseLabels[cKey]}\n`;
+        items.forEach(i => {
+          msg += `• *${i.qty}x ${i.name}*\n`;
+          if (i.doneness) msg += `   ↳ Punto: _${i.doneness}_\n`;
+          if (i.pairingName) msg += `   ↳ Maridaje: _${i.pairingName}_\n`;
+          if (i.tags && i.tags.length > 0) msg += `   ↳ Restricción: [${i.tags.join(', ')}]\n`;
+          if (i.notes) msg += `   ↳ Nota: "${i.notes}"\n`;
+        });
+      }
+    });
+
+    msg += `\n--------------------------------\n`;
+    msg += `*Subtotal:* ${formatMoney(subtotal)}\n`;
+    if (includeTipCheck.checked) msg += `*Servicio sugerido (10%):* ${formatMoney(tip)}\n`;
+    msg += `💰 *TOTAL CUENTA:* ${formatMoney(total)}\n`;
+
+    const encoded = encodeURIComponent(msg);
+    window.open(`https://wa.me/?text=${encoded}`, '_blank');
+  });
+
+  btnPrintBill.addEventListener('click', () => {
     window.print();
   });
 
-  // --- Smooth Scroll to Menu ---
-  if (scrollToMenuBtn) {
-    scrollToMenuBtn.addEventListener('click', () => {
-      document.getElementById('menu-section').scrollIntoView({ behavior: 'smooth' });
-    });
+  btnCerrarMesa.addEventListener('click', () => {
+    const table = tablesState[activeTableId];
+    if (confirm(`¿Deseas cerrar y liberar la ${table.name}? La comanda se reiniciará.`)) {
+      table.status = 'free';
+      table.items = [];
+      table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      saveTablesState();
+      renderComandaView();
+      renderCatalog();
+    }
+  });
+
+  // --- 13. QR Local Connect Generator (Offline Pure SVG) ---
+  function renderLocalQR() {
+    const localUrl = 'http://192.168.1.41:8085';
+    document.getElementById('local-ip-url').textContent = localUrl;
+
+    // Fast SVG representation for local QR sharing
+    qrContainer.innerHTML = `
+      <svg width="200" height="200" viewBox="0 0 29 29" shape-rendering="crispEdges">
+        <rect width="29" height="29" fill="#ffffff"/>
+        <!-- Corner 1 -->
+        <path fill="#000000" d="M2 2h7v7H2zM3 3v5h5V3zM4 4h3v3H4z"/>
+        <!-- Corner 2 -->
+        <path fill="#000000" d="M20 2h7v7h-7zM21 3v5h5V3zM22 4h3v3h-3z"/>
+        <!-- Corner 3 -->
+        <path fill="#000000" d="M2 20h7v7H2zM3 21v5h5v-5zM4 22h3v3H4z"/>
+        <!-- Data Matrix Pattern for local IP -->
+        <path fill="#000000" d="M11 2h2v1h-2zM15 2h1v2h-1zM18 2h1v1h-1zM11 4h1v2h-1zM13 5h3v1h-3zM17 4h1v3h-1zM11 7h2v1h-2zM14 8h2v1h-2zM18 8h1v2h-1zM2 11h2v1H2zM6 11h1v2H6zM8 12h2v1H8zM12 11h2v2h-2zM16 11h1v1h-1zM19 11h3v1h-3zM24 11h3v1h-3zM4 14h2v1H4zM8 14h1v3H8zM11 15h3v2h-3zM15 14h2v1h-2zM18 14h1v2h-1zM21 14h2v2h-2zM25 14h2v1h-2zM2 17h3v1H2zM6 18h1v1H6zM14 18h1v1h-1zM16 18h3v1h-3zM20 18h2v2h-2zM24 18h3v1h-3zM11 20h2v1h-2zM15 20h1v3h-1zM18 21h1v1h-1zM21 21h3v1h-3zM25 21h2v3h-2zM12 23h2v1h-2zM17 23h2v1h-2zM20 24h3v1h-3zM11 25h3v2h-3zM16 26h2v1h-2zM20 26h1v1h-1zM23 26h4v1h-4z"/>
+      </svg>
+    `;
   }
 
+  connectPhoneBtn.addEventListener('click', () => {
+    renderLocalQR();
+    qrConnectModal.style.display = 'flex';
+  });
+
+  qrModalClose.addEventListener('click', () => qrConnectModal.style.display = 'none');
+  qrModalDone.addEventListener('click', () => qrConnectModal.style.display = 'none');
+
+  btnCopyIp.addEventListener('click', () => {
+    navigator.clipboard.writeText('http://192.168.1.41:8085').then(() => {
+      btnCopyIp.textContent = '¡Copiado!';
+      setTimeout(() => btnCopyIp.textContent = 'Copiar Enlace', 2000);
+    });
+  });
+
+  // --- 14. Profile & Diners Modal ---
+  function openProfileModal() {
+    inputMozoName.value = activeMozo;
+    displayDinersNum.textContent = tablesState[activeTableId].diners;
+    mozoProfileModal.style.display = 'flex';
+  }
+
+  mozoProfileBtn.addEventListener('click', openProfileModal);
+  editDinersBtn.addEventListener('click', openProfileModal);
+  profileModalClose.addEventListener('click', () => mozoProfileModal.style.display = 'none');
+
+  btnDecDiners.addEventListener('click', () => {
+    let d = parseInt(displayDinersNum.textContent);
+    if (d > 1) displayDinersNum.textContent = d - 1;
+  });
+
+  btnIncDiners.addEventListener('click', () => {
+    let d = parseInt(displayDinersNum.textContent);
+    if (d < 20) displayDinersNum.textContent = d + 1;
+  });
+
+  profileModalSave.addEventListener('click', () => {
+    activeMozo = inputMozoName.value.trim() || 'Mozo Máximo';
+    localStorage.setItem('bocheros_mozo_name', activeMozo);
+
+    const d = parseInt(displayDinersNum.textContent);
+    tablesState[activeTableId].diners = d;
+    tablesState[activeTableId].mozo = activeMozo;
+
+    saveTablesState();
+    mozoProfileModal.style.display = 'none';
+  });
+
+  // --- 15. Multilingual Switcher ---
+  langBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    langPopover.classList.toggle('show');
+  });
+
+  document.addEventListener('click', () => langPopover.classList.remove('show'));
+
+  const flagMap = { es: '🇦🇷', en: '🇬🇧', pt: '🇧🇷', 'de-ch': '🇨🇭' };
+  const labelMap = { es: 'ES', en: 'EN', pt: 'PT', 'de-ch': 'CH' };
+
+  langChoices.forEach(choice => {
+    choice.addEventListener('click', () => {
+      const l = choice.getAttribute('data-lang');
+      activeLang = l;
+      curLangFlag.textContent = flagMap[l];
+      curLangLabel.textContent = labelMap[l];
+      langChoices.forEach(c => c.classList.toggle('active', c.getAttribute('data-lang') === l));
+      renderCatalog();
+    });
+  });
+
   // Initialize
-  initStepDots();
-  setSeason('spring');
+  updateTopIndicators();
+  renderCatalog();
 });
