@@ -3,304 +3,153 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Los Bocheros Restó · App de Pedidos & Comandas para Mozos</title>
-  <meta name="description" content="Herramienta de pedidos y comandas para mozos de Los Bocheros Restó - Bodega Lamadrid Estate Wines. Gestión de mesas, comandas a cocina y maridajes en Las Compuertas.">
+  <title>Los Bocheros Restó · Comandas por Comensal</title>
   
   <!-- PWA & Mobile Meta Tags -->
-  <meta name="theme-color" content="#153b66">
+  <meta name="theme-color" content="#123258">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/png" href="assets/lamadrid-logo.png">
-  <link rel="apple-touch-icon" href="assets/lamadrid-logo.png">
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Montserrat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="mozo-app">
-  <!-- Top App Bar for Waitstaff -->
-  <header class="app-header">
-    <div class="header-inner">
-      <!-- Brand & Table Trigger -->
-      <div class="header-left">
-        <button class="tables-view-btn" id="open-tables-map-btn" title="Ver Mapa de Mesas">
-          <svg class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="3" width="7" height="7" rx="1"/>
-            <rect x="14" y="14" width="7" height="7" rx="1"/>
-            <rect x="3" y="14" width="7" height="7" rx="1"/>
-          </svg>
-          <span class="active-table-badge" id="active-table-indicator">Mesa 1</span>
-        </button>
-
-        <div class="mozo-profile-badge" id="mozo-profile-btn" title="Cambiar Nombre de Mozo">
-          <span class="mozo-avatar">🤵</span>
-          <span class="mozo-name" id="display-mozo-name">Mozo Máximo</span>
+<body class="simple-app">
+  <!-- Top Bar -->
+  <header class="main-bar">
+    <div class="bar-container">
+      <div class="brand-block" id="btn-go-map">
+        <img src="assets/lamadrid-logo.png" alt="Lamadrid" class="bar-logo">
+        <div class="brand-text">
+          <span class="brand-title">LOS BOCHEROS</span>
+          <span class="brand-sub">COMANDAS & MOZOS</span>
         </div>
       </div>
 
-      <!-- Action Tools -->
-      <div class="header-right">
-        <!-- Connect Phone QR Button -->
-        <button class="header-action-btn" id="connect-phone-btn" title="Conectar Celular de Compañeros">
-          <svg class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="5" y="2" width="14" height="20" rx="2" ry="2"/>
-            <line x1="12" y1="18" x2="12.01" y2="18"/>
-          </svg>
-          <span class="btn-caption">Conectar Celular</span>
+      <div class="bar-actions">
+        <!-- Current WhatsApp target indicator -->
+        <button class="btn-wa-config" id="btn-open-wa-config" title="Configurar número de WhatsApp para envío">
+          <span class="wa-dot"></span>
+          <span class="wa-num-preview" id="wa-num-display">Configurar WhatsApp</span>
+          <span class="gear-icon">⚙️</span>
         </button>
-
-        <!-- Language Selector -->
-        <div class="lang-selector-wrap">
-          <button class="header-action-btn lang-trigger-btn" id="lang-btn">
-            <span class="flag-icon" id="cur-lang-flag">🇦🇷</span>
-            <span class="lang-text" id="cur-lang-label">ES</span>
-          </button>
-          <div class="lang-popover" id="lang-popover">
-            <button class="lang-choice active" data-lang="es"><span>🇦🇷</span> Español</button>
-            <button class="lang-choice" data-lang="en"><span>🇬🇧</span> English</button>
-            <button class="lang-choice" data-lang="pt"><span>🇧🇷</span> Português</button>
-            <button class="lang-choice" data-lang="de-ch"><span>🇨🇭</span> Suizo (Deutsch)</button>
-          </div>
-        </div>
-
-        <!-- Cart / Comanda Trigger -->
-        <button class="header-action-btn cart-btn" id="view-comanda-btn" title="Ver Comanda de la Mesa">
-          <svg class="h-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-          <span class="cart-count-pill" id="cart-item-count">0</span>
-          <span class="cart-total-pill" id="cart-total-badge">$0</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Sub-bar: Sector & Table Diners info -->
-    <div class="table-status-bar">
-      <div class="status-left">
-        <span class="sector-label" id="active-sector-label">Terraza Viñedos</span>
-        <span class="dot-divider">•</span>
-        <span class="diners-label">
-          <svg class="tiny-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <span id="active-diners-count">2 comensales</span>
-        </span>
-        <button class="mini-btn-edit" id="edit-diners-btn" title="Editar comensales">✏️</button>
-      </div>
-      <div class="status-right">
-        <span class="table-state-tag state-active" id="active-table-status">En Curso</span>
       </div>
     </div>
   </header>
 
-  <!-- Main App Navigation Tabs (Catalog vs Tables vs Live Ticket) -->
-  <nav class="main-segmented-nav">
-    <button class="seg-tab active" data-view="catalog" id="tab-catalog">
-      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M12 20h9M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-      </svg>
-      <span>Toma de Pedido</span>
-    </button>
-    <button class="seg-tab" data-view="tables" id="tab-tables">
-      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <line x1="3" y1="9" x2="21" y2="9"/>
-        <line x1="9" y1="21" x2="9" y2="9"/>
-      </svg>
-      <span>Mapa de Mesas (<span id="occupied-tables-count">1</span>/16)</span>
-    </button>
-    <button class="seg-tab" data-view="comanda" id="tab-comanda">
-      <svg class="nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-        <polyline points="14 2 14 8 20 8"/>
-        <line x1="16" y1="13" x2="8" y2="13"/>
-        <line x1="16" y1="17" x2="8" y2="17"/>
-      </svg>
-      <span>Comanda de Mesa</span>
-    </button>
-  </nav>
-
   <!-- Main Container -->
-  <main class="app-content-container">
+  <main class="app-main">
 
     <!-- ===================================================================
-         VIEW 1: TOMA DE PEDIDO (CATALOG OF MENU OPTIONS)
+         VIEW 1: MAPA DE MESAS (SELECCIÓN SIMPLE)
          =================================================================== -->
-    <section class="app-view active-view" id="view-catalog">
-      <!-- Quick Filter Bar -->
-      <div class="catalog-filter-bar">
-        <!-- Season Category Selector -->
-        <div class="category-chips-scroll">
-          <button class="cat-chip active" data-category="primavera-entradas">🌸 Entradas Primavera</button>
-          <button class="cat-chip" data-category="primavera-principales">🌸 Principales Primavera</button>
-          <button class="cat-chip" data-category="primavera-postres">🌸 Postres Primavera</button>
-          <button class="cat-chip" data-category="otono-pasos">🍂 Menú Otoño (7 Pasos)</button>
-          <button class="cat-chip" data-category="vinos-tintos">🍷 Vinos Tintos Lamadrid</button>
-          <button class="cat-chip" data-category="vinos-blancos-burbujas">🥂 Blancos & Burbujas</button>
-          <button class="cat-chip" data-category="bebidas-cafeteria">☕ Aguas & Cafetería</button>
+    <section class="view-panel" id="panel-mapa-mesas">
+      <div class="section-heading">
+        <h2>🗺️ Mapa de Mesas</h2>
+        <p>Toca una mesa para tomar o ver su comanda desglosada por comensal.</p>
+      </div>
+
+      <div class="sectors-grid" id="sectors-container">
+        <!-- Rendered via JS: Terraza, Galería, Salón, Pérgola -->
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 2: COMANDA DE MESA (DESGLOSE POR COMENSAL)
+         =================================================================== -->
+    <section class="view-panel" id="panel-comanda-mesa" style="display: none;">
+      <!-- Comanda Navigation & Header -->
+      <div class="comanda-top-nav">
+        <button class="btn-back" id="btn-back-to-map">
+          ← <span>Volver al Mapa</span>
+        </button>
+        <div class="active-table-title-wrap">
+          <h2 id="title-active-table">Mesa 1 · Terraza Viñedos</h2>
+          <span class="table-time-opened" id="label-table-time">Abierta: 13:00</span>
+        </div>
+        <button class="btn-add-comensal-top" id="btn-add-comensal-top">
+          + <span>Comensal</span>
+        </button>
+      </div>
+
+      <!-- Diners Cards Container (Desglose por comensal) -->
+      <div class="comensales-container" id="comensales-list">
+        <!-- Rendered dynamically: Comensal 1, Comensal 2, etc. -->
+      </div>
+
+      <!-- Button Add Comensal Bottom -->
+      <div class="add-comensal-bar">
+        <button class="btn-add-comensal" id="btn-add-comensal">
+          <span class="plus-circle">+</span>
+          <span>Agregar Otro Comensal a la Mesa</span>
+        </button>
+      </div>
+
+      <!-- Bebidas & Vinos de la Mesa -->
+      <div class="mesa-section-card">
+        <div class="mesa-section-header">
+          <h3>🍷 Vinos de Lamadrid & Bebidas para la Mesa</h3>
+          <span class="section-hint">Compartidas para la mesa</span>
+        </div>
+        <div class="bebidas-selector-wrap">
+          <div class="quick-drink-row">
+            <select id="select-add-bebida" class="drink-select">
+              <option value="">+ Seleccionar Vino o Bebida para agregar...</option>
+              <optgroup label="Vinos Tintos Lamadrid">
+                <option value="Lamadrid Reserva Malbec ($19.000)|19000">Lamadrid Reserva Malbec · $19.000</option>
+                <option value="Lamadrid Reserva Bonarda ($19.000)|19000">Lamadrid Reserva Bonarda · $19.000</option>
+                <option value="Lamadrid Gran Reserva Malbec ($29.000)|29000">Lamadrid Gran Reserva Malbec · $29.000</option>
+                <option value="Guillermo Cabernet Sauvignon ($45.000)|45000">Guillermo Cabernet Sauvignon · $45.000</option>
+                <option value="Matilde Malbec Ícono ($65.000)|65000">Matilde Malbec (Ícono) · $65.000</option>
+              </optgroup>
+              <optgroup label="Blancos & Espumosos">
+                <option value="Los Bocheros White Blend ($16.000)|16000">Los Bocheros White Blend · $16.000</option>
+                <option value="Lamadrid Gran Reserva Chardonnay ($27.000)|27000">Lamadrid Gran Reserva Chardonnay · $27.000</option>
+                <option value="ZunZun Pet Nat ($19.000)|19000">ZunZun Pet Nat · $19.000</option>
+                <option value="Margarita Espumoso Champenoise ($28.000)|28000">Margarita Espumoso Champenoise · $28.000</option>
+              </optgroup>
+              <optgroup label="Sin Alcohol & Cafetería">
+                <option value="Agua Villavicencio con gas ($3.500)|3500">Agua con gas · $3.500</option>
+                <option value="Agua Villavicencio sin gas ($3.500)|3500">Agua sin gas · $3.500</option>
+                <option value="Café espresso de especialidad ($3.200)|3200">Café espresso · $3.200</option>
+              </optgroup>
+            </select>
+            <button class="btn-add-drink" id="btn-add-drink-item">Agregar</button>
+          </div>
+
+          <div class="drinks-active-list" id="drinks-active-list">
+            <!-- Rendered list of shared drinks -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen y Gran Botón de WhatsApp -->
+      <div class="comanda-send-footer">
+        <div class="footer-summary-row">
+          <div class="summary-diners-count" id="summary-diners-label">2 Comensales</div>
+          <div class="summary-total-box">
+            <span class="total-caption">TOTAL ESTIMADO:</span>
+            <span class="total-amount" id="summary-total-amount">$0</span>
+          </div>
         </div>
 
-        <!-- Search Bar -->
-        <div class="catalog-search-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        <button class="btn-send-whatsapp" id="btn-send-comanda-wa">
+          <svg class="wa-btn-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.3C4.19 14.91 3.73 13.3 3.73 11.91C3.73 7.37 7.46 3.67 12.05 3.67M9.06 7.42C8.89 7.42 8.62 7.48 8.38 7.74C8.15 8 7.49 8.62 7.49 9.87C7.49 11.12 8.4 12.33 8.53 12.5C8.66 12.67 10.32 15.23 12.86 16.32C13.46 16.58 13.93 16.74 14.3 16.85C14.91 17.05 15.46 17.02 15.9 16.96C16.39 16.89 17.41 16.34 17.62 15.75C17.83 15.16 17.83 14.66 17.77 14.55C17.71 14.44 17.54 14.38 17.29 14.25C17.04 14.13 15.82 13.53 15.59 13.44C15.36 13.36 15.2 13.32 15.03 13.57C14.86 13.82 14.38 14.38 14.24 14.55C14.1 14.72 13.95 14.74 13.7 14.61C13.45 14.49 12.38 14.14 11.12 13.01C10.14 12.13 9.47 11.05 9.28 10.72C9.09 10.39 9.26 10.21 9.38 10.09C9.5 9.97 9.64 9.79 9.77 9.64C9.9 9.49 9.94 9.38 10.02 9.22C10.1 9.05 10.06 8.91 10 8.78C9.94 8.66 9.44 7.44 9.24 6.94C9.04 6.45 8.84 6.52 8.68 6.52L8.27 6.51C8.08 6.51 7.78 6.58 7.55 6.83"/>
           </svg>
-          <input type="text" id="catalog-search-input" placeholder="Buscar plato, vino, ingrediente..." autocomplete="off">
-          <button class="clear-search-btn" id="clear-search-btn" style="display: none;">✕</button>
-        </div>
-      </div>
-
-      <!-- Menu Items Grid -->
-      <div class="items-grid" id="menu-items-container">
-        <!-- Rendered dynamically by app.js -->
-      </div>
-    </section>
-
-    <!-- ===================================================================
-         VIEW 2: MAPA DE TODAS LAS MESAS (TABLES MANAGEMENT)
-         =================================================================== -->
-    <section class="app-view" id="view-tables" style="display: none;">
-      <div class="tables-view-header">
-        <div class="tables-view-title-block">
-          <h2>Mesas · Los Bocheros Restó</h2>
-          <p>Selecciona una mesa para gestionar o tomar pedidos.</p>
-        </div>
-        <div class="tables-legend">
-          <span class="legend-item"><span class="status-dot dot-free"></span> Libre</span>
-          <span class="legend-item"><span class="status-dot dot-busy"></span> Con Pedido</span>
-          <span class="legend-item"><span class="status-dot dot-sent"></span> En Cocina</span>
-          <span class="legend-item"><span class="status-dot dot-bill"></span> Cuenta</span>
-        </div>
-      </div>
-
-      <!-- Sectores de Mesas -->
-      <div class="sectors-container">
-        <!-- Sector 1 -->
-        <div class="sector-block">
-          <h3 class="sector-title">🌿 Sector Terraza Viñedos (Mesas 1 a 5)</h3>
-          <div class="tables-grid" id="sector-terraza-grid">
-            <!-- Rendered via JS -->
+          <div class="wa-btn-text">
+            <span class="btn-main-title">ENVIAR COMANDA A COCINA</span>
+            <span class="btn-sub-title" id="wa-send-target-label">Redirecciona al WhatsApp de Cocina</span>
           </div>
-        </div>
+        </button>
 
-        <!-- Sector 2 -->
-        <div class="sector-block">
-          <h3 class="sector-title">🧱 Sector Galería Adobe (Mesas 6 a 10)</h3>
-          <div class="tables-grid" id="sector-galeria-grid">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
-
-        <!-- Sector 3 -->
-        <div class="sector-block">
-          <h3 class="sector-title">🍷 Sector Salón Barricas (Mesas 11 a 14)</h3>
-          <div class="tables-grid" id="sector-salon-grid">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
-
-        <!-- Sector 4 -->
-        <div class="sector-block">
-          <h3 class="sector-title">🍇 Sector Pérgola Las Compuertas (Mesas 15 a 16)</h3>
-          <div class="tables-grid" id="sector-pergola-grid">
-            <!-- Rendered via JS -->
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===================================================================
-         VIEW 3: COMANDA EN VIVO & CUENTA (LIVE TICKET VIEW)
-         =================================================================== -->
-    <section class="app-view" id="view-comanda" style="display: none;">
-      <div class="comanda-card">
-        <!-- Comanda Header -->
-        <div class="comanda-header">
-          <div class="comanda-header-left">
-            <h2 id="comanda-table-title">Mesa 1 · Terraza Viñedos</h2>
-            <div class="comanda-meta">
-              <span id="comanda-mozo-tag">Mozo: Máximo</span>
-              <span>•</span>
-              <span id="comanda-time-tag">Abierta: 13:30</span>
-              <span>•</span>
-              <span id="comanda-diners-tag">2 personas</span>
-            </div>
-          </div>
-          <div class="comanda-header-right">
-            <span class="state-pill state-pill-active" id="comanda-status-pill">En Curso</span>
-          </div>
-        </div>
-
-        <!-- Empty State (if no items) -->
-        <div class="comanda-empty-state" id="comanda-empty" style="display: none;">
-          <div class="empty-icon">🍽️</div>
-          <h3>La mesa no tiene pedidos cargados aún</h3>
-          <p>Ve a la pestaña <strong>"Toma de Pedido"</strong> para agregar entradas, platos principales, postres o vinos.</p>
-          <button class="btn btn-primary" id="btn-empty-go-catalog">Ir a Tomar Pedido</button>
-        </div>
-
-        <!-- Ordered Items by Courses List -->
-        <div class="comanda-courses-container" id="comanda-items-list">
-          <!-- Rendered dynamically by app.js grouped into:
-               - Entradas
-               - Principales
-               - Postres
-               - Vinos & Bebidas
-          -->
-        </div>
-
-        <!-- Financial Summary -->
-        <div class="comanda-summary-box" id="comanda-summary-box">
-          <div class="summary-line">
-            <span>Subtotal de Platos & Vinos:</span>
-            <span class="summary-val" id="comanda-subtotal-val">$0</span>
-          </div>
-          <div class="summary-line tip-line">
-            <label class="tip-checkbox-label">
-              <input type="checkbox" id="include-tip-check" checked>
-              <span>Servicio de Mesa / Propina Sugerida (10%)</span>
-            </label>
-            <span class="summary-val" id="comanda-tip-val">$0</span>
-          </div>
-          <div class="summary-line total-line">
-            <span>TOTAL DE LA CUENTA:</span>
-            <span class="summary-total" id="comanda-total-val">$0</span>
-          </div>
-        </div>
-
-        <!-- Waitstaff Action Controls -->
-        <div class="comanda-actions-bar">
-          <button class="btn btn-march" id="btn-marchar-cocina" title="Marchar o enviar comanda a cocina">
-            <span class="btn-icon">🔔</span>
-            <span>Marchar a Cocina</span>
-          </button>
-
-          <button class="btn btn-whatsapp-order" id="btn-whatsapp-comanda" title="Enviar formato comanda a grupo de cocina o caja">
-            <span class="btn-icon">💬</span>
-            <span>Enviar Comanda por WhatsApp</span>
-          </button>
-
-          <button class="btn btn-print-ticket" id="btn-print-bill" title="Ver e imprimir ticket de cobro">
-            <span class="btn-icon">🧾</span>
-            <span>Ticket de Cobro</span>
-          </button>
-
-          <button class="btn btn-clear-table" id="btn-cerrar-mesa" title="Cobrar y liberar mesa para nuevos clientes">
-            <span class="btn-icon">🧹</span>
-            <span>Cerrar Mesa</span>
-          </button>
+        <div class="secondary-actions">
+          <button class="btn-sec-clean" id="btn-vaciar-mesa">🗑️ Vaciar y Reiniciar Mesa</button>
         </div>
       </div>
     </section>
@@ -308,140 +157,41 @@
   </main>
 
   <!-- ===================================================================
-       MODAL 1: CUSTOMIZE DISH (COOKING DONENESS, PAIRINGS & NOTES)
+       MODAL: CONFIGURAR NÚMERO DE WHATSAPP (SE GUARDA EN LOCALSTORAGE)
        =================================================================== -->
-  <div class="modal-overlay" id="custom-dish-modal" style="display: none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="custom-modal-title">Personalizar Plato</h3>
-        <button class="modal-close-btn" id="custom-modal-close">✕</button>
+  <div class="modal-backdrop" id="modal-wa-config" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-box-header">
+        <h3>📲 Número de WhatsApp de Cocina / Caja</h3>
+        <button class="btn-close-modal" id="btn-close-wa-modal">✕</button>
       </div>
-      <div class="modal-body">
-        <p class="custom-dish-price" id="custom-modal-price">$0</p>
-
-        <!-- Doneness Section (if meat) -->
-        <div class="custom-section" id="doneness-section">
-          <label class="custom-label">Punto de Cocción de la Carne:</label>
-          <div class="pill-options-group">
-            <button class="pill-opt" data-doneness="Jugoso (Rojo)">🥩 Jugoso</button>
-            <button class="pill-opt active" data-doneness="A Punto (Rosado)">🥩 A Punto</button>
-            <button class="pill-opt" data-doneness="Cocido / Bien Cocido">🥩 Cocido</button>
-          </div>
-        </div>
-
-        <!-- Pairing Section -->
-        <div class="custom-section">
-          <label class="custom-label">Maridaje Sugerido:</label>
-          <div class="pairing-select-cards">
-            <div class="p-card active" data-pairing="none" id="pair-opt-none">
-              <span class="p-title">Sin Maridaje</span>
-              <span class="p-desc">Solo el plato</span>
-            </div>
-            <div class="p-card" data-pairing="standard" id="pair-opt-standard">
-              <span class="p-badge-s">Clásico</span>
-              <span class="p-title" id="pair-std-name">Vino Clásico</span>
-            </div>
-            <div class="p-card" data-pairing="upgrade" id="pair-opt-upgrade">
-              <span class="p-badge-u">Upgrade</span>
-              <span class="p-title" id="pair-upg-name">Vino Upgrade</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Dietary & Allergy Quick Tags -->
-        <div class="custom-section">
-          <label class="custom-label">Restricciones & Alergias Rápidas:</label>
-          <div class="allergy-tags-group">
-            <button class="tag-toggle" data-tag="Sin Sal">Sin Sal</button>
-            <button class="tag-toggle" data-tag="Sin TACC / Celíaco">Sin TACC</button>
-            <button class="tag-toggle" data-tag="Vegetariano">Vegetariano</button>
-            <button class="tag-toggle" data-tag="Vegano">Vegano</button>
-            <button class="tag-toggle" data-tag="Sin Frutos Secos">Sin Frutos Secos</button>
-            <button class="tag-toggle" data-tag="Sin Lácteos">Sin Lácteos</button>
-            <button class="tag-toggle" data-tag="Para Compartir">Para Compartir</button>
-          </div>
-        </div>
-
-        <!-- Free-form notes -->
-        <div class="custom-section">
-          <label class="custom-label" for="custom-dish-notes">Nota Especial para la Cocina:</label>
-          <textarea id="custom-dish-notes" rows="2" placeholder="Ej: Sin chimichurri, marchar con el principal..."></textarea>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" id="custom-modal-cancel">Cancelar</button>
-        <button class="btn btn-primary" id="custom-modal-save">Guardar en Comanda</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================================================================
-       MODAL 2: QR CODE LOCAL CONNECT FOR COLLEAGUES' PHONES
-       =================================================================== -->
-  <div class="modal-overlay" id="qr-connect-modal" style="display: none;">
-    <div class="modal-card qr-card">
-      <div class="modal-header">
-        <h3>📱 Conectar Celular de Compañeros</h3>
-        <button class="modal-close-btn" id="qr-modal-close">✕</button>
-      </div>
-      <div class="modal-body qr-body">
-        <p class="qr-instructions">
-          Asegúrate de que tu celular esté conectado al <strong>WiFi del restaurante</strong> y escanea este código con tu cámara:
+      <div class="modal-box-body">
+        <p class="modal-desc">
+          Ingresa el número de teléfono con código de país y área (sin espacios, guiones ni '+').
+          <strong>Se guarda en este teléfono y queda configurado para todos los envíos.</strong>
         </p>
 
-        <!-- QR Code Canvas -->
-        <div class="qr-canvas-wrapper" id="qr-container">
-          <!-- Canvas injected via JS -->
+        <div class="input-wa-group">
+          <label for="input-wa-number">Número de WhatsApp (ej: 5492615557890 para Mendoza):</label>
+          <input type="tel" id="input-wa-number" placeholder="549261xxxxxxx" class="wa-text-input">
         </div>
 
-        <div class="ip-display-box">
-          <span class="ip-title">Dirección Local en Red:</span>
-          <code class="ip-url" id="local-ip-url">http://192.168.1.41:8085</code>
-          <button class="btn-copy" id="btn-copy-ip">Copiar Enlace</button>
+        <div class="mozo-name-group">
+          <label for="input-mozo-name">Tu Nombre (Mozo / Camarero):</label>
+          <input type="text" id="input-mozo-name" value="Máximo" placeholder="Ej: Máximo" class="wa-text-input">
         </div>
 
-        <p class="qr-subtext">
-          💡 Puedes pulsar en <em>"Agregar a pantalla principal"</em> en Safari o Chrome para usarla como una app nativa en el móvil.
-        </p>
+        <div class="preset-numbers-row">
+          <span class="preset-label">Formato de ejemplo:</span>
+          <button class="btn-preset-example" data-val="5492615557890">5492615557890 (Arg)</button>
+        </div>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="qr-modal-done">Listo</button>
+      <div class="modal-box-footer">
+        <button class="btn-cancel" id="btn-cancel-wa-modal">Cancelar</button>
+        <button class="btn-save-wa" id="btn-save-wa-number">Guardar Número</button>
       </div>
     </div>
   </div>
-
-  <!-- ===================================================================
-       MODAL 3: MOZO PROFILE & DINERS
-       =================================================================== -->
-  <div class="modal-overlay" id="mozo-profile-modal" style="display: none;">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3>🤵 Datos de Servicio</h3>
-        <button class="modal-close-btn" id="profile-modal-close">✕</button>
-      </div>
-      <div class="modal-body">
-        <div class="custom-section">
-          <label class="custom-label" for="input-mozo-name">Nombre del Mozo / Camarero:</label>
-          <input type="text" id="input-mozo-name" value="Mozo Máximo" class="input-text">
-        </div>
-
-        <div class="custom-section">
-          <label class="custom-label" for="input-diners-num">Cantidad de Comensales en la Mesa:</label>
-          <div class="counter-input-row">
-            <button class="btn-counter" id="btn-dec-diners">-</button>
-            <span class="counter-display" id="display-diners-num">2</span>
-            <button class="btn-counter" id="btn-inc-diners">+</button>
-          </div>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-primary" id="profile-modal-save">Guardar Cambios</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Audio elements for tactile feedback -->
-  <audio id="sound-bell" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
 
   <script src="app.js"></script>
 </body>
