@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Los Bocheros Restó · Comandas por Comensal</title>
+  <title>Los Bocheros Restó · Comandas & Servicio de Salón</title>
   
   <!-- PWA & Mobile Meta Tags -->
   <meta name="theme-color" content="#123258">
@@ -33,7 +33,7 @@
 
       <div class="bar-actions">
         <!-- Current WhatsApp target indicator -->
-        <button class="btn-wa-config" id="btn-open-wa-config" title="Configurar número de WhatsApp para envío">
+        <button class="btn-wa-config" id="btn-open-wa-config" title="Configurar número de WhatsApp para comanda">
           <span class="wa-dot"></span>
           <span class="wa-num-preview" id="wa-num-display">Configurar WhatsApp</span>
           <span class="gear-icon">⚙️</span>
@@ -46,12 +46,21 @@
   <main class="app-main">
 
     <!-- ===================================================================
-         VIEW 1: MAPA DE MESAS (SELECCIÓN SIMPLE)
+         VIEW 1: MAPA DE MESAS (SELECCIÓN RÁPIDA & ESTADO DE SALÓN)
          =================================================================== -->
     <section class="view-panel" id="panel-mapa-mesas">
       <div class="section-heading">
-        <h2>🗺️ Mapa de Mesas</h2>
-        <p>Toca una mesa para tomar o ver su comanda desglosada por comensal.</p>
+        <div class="heading-row">
+          <div>
+            <h2>🗺️ Mapa de Mesas</h2>
+            <p>Acceso rápido a mesas, comensales y seguimiento del agua.</p>
+          </div>
+          <!-- Resumen de Servicio de Agua en Salón -->
+          <div class="water-summary-badge" title="Estado de agua en el salón">
+            <span class="water-icon-small">💧</span>
+            <span id="water-salon-summary">Mesas al día</span>
+          </div>
+        </div>
       </div>
 
       <div class="sectors-grid" id="sectors-container">
@@ -60,13 +69,13 @@
     </section>
 
     <!-- ===================================================================
-         VIEW 2: COMANDA DE MESA (DESGLOSE POR COMENSAL)
+         VIEW 2: COMANDA DE MESA (DESGLOSE POR COMENSAL & SEGUIMIENTO)
          =================================================================== -->
     <section class="view-panel" id="panel-comanda-mesa" style="display: none;">
-      <!-- Comanda Navigation & Header -->
+      <!-- Comanda Top Bar / Navigation -->
       <div class="comanda-top-nav">
         <button class="btn-back" id="btn-back-to-map">
-          ← <span>Volver al Mapa</span>
+          ← <span>Mapa</span>
         </button>
         <div class="active-table-title-wrap">
           <h2 id="title-active-table">Mesa 1 · Terraza Viñedos</h2>
@@ -77,9 +86,60 @@
         </button>
       </div>
 
-      <!-- Diners Cards Container (Desglose por comensal) -->
+      <!-- ===============================================================
+           BOTÓN SERVICIO DE AGUA (DEGRADADO VERDE -> ROJO)
+           Lleva el seguimiento del servicio de agua de la mesa
+           =============================================================== -->
+      <div class="water-tracker-container">
+        <div class="water-tracker-card" id="water-tracker-card">
+          <button class="btn-water-service" id="btn-water-service" title="Toca para registrar agua servida">
+            <div class="water-bottle-wrap">
+              <!-- SVG Botella de Agua Estilizada -->
+              <svg class="water-bottle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M8 2h8" />
+                <path d="M9 2v3h6V2" />
+                <path d="M9 5a4 4 0 0 0-4 4v11a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V9a4 4 0 0 0-4-4H9z" />
+                <path class="water-level-wave" d="M5 14c1.5 1 2.5-1 4 0s2.5 1 4 0 2.5-1 4 0" />
+              </svg>
+              <span class="water-bubble-anim">💧</span>
+            </div>
+
+            <div class="water-meta-block">
+              <div class="water-meta-header">
+                <span class="water-meta-title">SERVICIO DE AGUA</span>
+                <span class="water-status-chip" id="water-status-chip">100% LLENO</span>
+              </div>
+              <div class="water-meta-sub" id="water-meta-time">
+                Agua recién servida · Hace 0 min
+              </div>
+            </div>
+
+            <div class="water-action-tap">
+              <span class="tap-label">Toca al servir</span>
+              <span class="tap-icon">🔄</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Barra de Acceso Rápido a Comensales (Pills horizontales) -->
+      <div class="quick-diners-bar">
+        <div class="quick-diners-scroll" id="quick-diners-nav">
+          <!-- Rendered dynamically: [Todos] [👤 C1] [👤 C2] ... -->
+        </div>
+        <div class="view-toggle-actions">
+          <button class="btn-toggle-all" id="btn-expand-all" title="Ver todo el detalle de los comensales">
+            🔍 Expandir
+          </button>
+          <button class="btn-toggle-all" id="btn-collapse-all" title="Ver resumen compacto de los comensales">
+            📁 Colapsar
+          </button>
+        </div>
+      </div>
+
+      <!-- Diners Cards Container (Desglose por comensal & checks) -->
       <div class="comensales-container" id="comensales-list">
-        <!-- Rendered dynamically: Comensal 1, Comensal 2, etc. -->
+        <!-- Rendered dynamically via JS -->
       </div>
 
       <!-- Button Add Comensal Bottom -->
