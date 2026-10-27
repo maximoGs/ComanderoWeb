@@ -1,20 +1,21 @@
 /* ==========================================================================
-   LOS BOCHEROS RESTÓ · LAMADRID ESTATE WINES
+   MARTINO WINES · RESTAURANTE BODEGA 1901
+   Mayor Drummond, Luján de Cuyo, Mendoza · Selección Guía MICHELIN
    App de Comandas para Mozos & Servicio de Salón
    Mapa Rápido + Comensales Ampliables + Menús de Pasos (2, 3, 4, 7) & A la Carta
    Checks de Platos Servidos + Botón de Servicio de Agua con Degradado (Verde -> Rojo)
    ========================================================================== */
 
 :root {
-  --navy-primary: #123258;
-  --navy-dark: #0a1e36;
-  --navy-light: #1b4578;
-  --navy-soft: #edf4fc;
+  --navy-primary: #1e1d1b;
+  --navy-dark: #141312;
+  --navy-light: #2c2a27;
+  --navy-soft: #f4efe6;
 
-  --wine-terracotta: #7a2233;
-  --wine-soft: #fbf2f4;
-  --gold-accent: #c09d63;
-  --gold-soft: #fbf7f0;
+  --wine-terracotta: #6e1b2e;
+  --wine-soft: #faedf0;
+  --gold-accent: #c5a059;
+  --gold-soft: #fbf7ec;
   
   --whatsapp-green: #25d366;
   --whatsapp-dark: #128c7e;
@@ -87,7 +88,8 @@ body.simple-app {
   z-index: 100;
   background: var(--navy-dark);
   color: #ffffff;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
 }
 
 .bar-container {

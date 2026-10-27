@@ -1,61 +1,63 @@
 /**
- * Los Bocheros Restó · Lamadrid Estate Wines
+ * Martino Wines · Restaurante Bodega 1901
+ * Selección Guía MICHELIN · Mayor Drummond, Luján de Cuyo, Mendoza
  * App de Comandas para Mozos & Servicio de Salón
  * - Mapa de Mesas y Acceso Rápido a Comensales
  * - Acordeón para Ampliar y Ver Detalle de Cada Comensal
  * - Menús de Pasos (2, 3, 4 y 7 Pasos) y A la Carta
- * - Secciones de Entrada, Principal y Postre con agregado dinámico de opciones
+ * - Secciones de Entrada, Intermedio, Principal y Postre con checks de entrega
  * - Checks de Seguimiento de Platos Entregados (Pendiente / Servido)
  * - Botón de Servicio de Agua con Degradado Dinámico (Verde -> Amarillo -> Rojo)
  * - Envío Directo y Formateado a WhatsApp Persistente
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- 1. Catálogo de Platos, Menús y Maridajes ---
+  // --- 1. Catálogo de Platos, Menús y Maridajes de Martino Wines ---
   const MENU_CATALOG = {
     entradas: [
-      { id: 'sp_e1', name: 'Espárragos a la plancha, parmesano, almendras y yema curada', price: 18000, std: 'Lamadrid Blanc de Blancs', upg: 'Lamadrid Gran Reserva Chardonnay' },
-      { id: 'sp_e2', name: 'Provoleta asada con chimichurri rojo casero', price: 25000, std: 'Lamadrid Terroir Selection Malbec', upg: 'Lamadrid Reserva Cabernet Sauvignon' },
-      { id: 'sp_e3', name: 'Solomillo de cerdo curado al Malbec con manzana verde', price: 21000, std: 'Lamadrid Terroir Selection Bonarda', upg: 'Lamadrid Reserva Malbec' },
-      { id: 'sp_e4', name: 'Queso de cabra, remolacha asada, yogur y frambuesas', price: 18000, std: 'Lamadrid Terroir Selection Cabernet', upg: 'Lamadrid Reserva Cabernet Sauvignon' },
-      { id: 'sp_e5', name: 'Especial Dúo Empanadas Los Bocheros', price: 16000, std: 'Lamadrid Reserva Malbec', upg: 'Lamadrid Gran Reserva Malbec' }
+      { id: 'sp_e1', name: 'Empanadilla cuyana de chivo braseado con llajwa fresca', price: 17000, std: 'Martino Varietales Inusuales Marselan', upg: 'Baldomir Serie Terroirs' },
+      { id: 'sp_e2', name: 'Remolacha asada de la huerta, queso de cabra y cítricos', price: 16000, std: 'Martino Pedro Ximénez', upg: 'Martino Superiore Chardonnay' },
+      { id: 'sp_e3', name: 'Tartar de trucha curada de montaña, palta y emulsión fresca', price: 20000, std: 'Martino Rosé de Sangiovese', upg: 'Martino Extra Brut' },
+      { id: 'sp_e4', name: 'Mollejas crocantes glaseadas en reducción Baldomir y coliflor', price: 22000, std: 'Martino Varietales Inusuales Graciano', upg: 'Baldomir Gran Reserva' },
+      { id: 'sp_e5', name: 'Provoleta artesanal a las brasas con tomate reliquia y hierbas', price: 18000, std: 'Martino Malbec Drummond', upg: 'Martino Superiore Malbec' }
     ],
     principales: [
-      { id: 'sp_p1', name: 'Costilla confitada, cremoso de papa, Morbier y panceta', price: 34000, std: 'Lamadrid Gran Reserva Malbec', upg: 'Guillermo Cabernet Sauvignon', isMeat: true },
-      { id: 'sp_p2', name: 'Pasta artesanal de hongos, arvejas y muhammara', price: 29000, std: 'Lamadrid Gran Reserva Cabernet Franc', upg: 'Matilde Malbec (Ícono)' },
-      { id: 'sp_p3', name: 'Trucha a la plancha, curry de alcauciles y cuscús', price: 36000, std: 'Lamadrid Gran Reserva Chardonnay', upg: 'Begani Private Selection' },
-      { id: 'sp_p4', name: 'Ojo de bife y vegetales frescos de temporada salteados', price: 36000, std: 'Lamadrid Gran Reserva Malbec', upg: 'Matilde Malbec (Ícono)', isMeat: true }
+      { id: 'sp_p1', name: 'Ojo de bife madurado al sarmiento con papas fondant y vegetales', price: 38000, std: 'Martino Varietales Inusuales Petit Verdot', upg: 'Baldomir Gran Malbec (Ícono)', isMeat: true },
+      { id: 'sp_p2', name: 'Costillar de cordero patagónico confitado y puré especiado', price: 37000, std: 'Martino Varietales Inusuales Marselan', upg: 'Baldomir Serie Terroirs', isMeat: true },
+      { id: 'sp_p3', name: 'Trucha salmonada a la chapa con cuscús de hierbas andinas', price: 35000, std: 'Martino Pedro Ximénez Reserva', upg: 'Martino Superiore Chardonnay' },
+      { id: 'sp_p4', name: 'Sorrentinos artesanales de hongos silvestres y crema trufada', price: 29000, std: 'Martino Sangiovese', upg: 'Baldomir Gran Blend' },
+      { id: 'sp_p5', name: 'Arroz cremoso de azafrán con vegetales asados de la huerta', price: 27000, std: 'Martino Pinot Noir', upg: 'Martino Superiore Reserva' }
     ],
     postres: [
-      { id: 'sp_d1', name: 'Pera pochada, mascarpone, toffee y queso pepato', price: 16000, std: 'ZunZun Pet Nat', upg: 'Margarita Espumoso' },
-      { id: 'sp_d2', name: 'Tarta flan caramelizada con helado', price: 17000, std: 'ZunZun Pet Nat', upg: 'Margarita Espumoso' },
-      { id: 'sp_d3', name: 'Selección artesanal de quesos y dulces de estación', price: 16000, std: 'ZunZun Pet Nat', upg: 'Margarita Espumoso' },
-      { id: 'sp_d4', name: 'Clásico panqueque casero tibio con dulce de leche', price: 18000, std: 'ZunZun Pet Nat', upg: 'Margarita Espumoso' }
+      { id: 'sp_d1', name: 'Húmedo de chocolate amargo 70%, frutos rojos y pistacho', price: 16000, std: 'Baldomir Cosecha Tardía', upg: 'Martino Dulce Natural' },
+      { id: 'sp_d2', name: 'Pera asada al vino tinto con mousse de brie y crocante', price: 15000, std: 'Martino Pedro Ximénez Especial', upg: 'Martino Superiore' },
+      { id: 'sp_d3', name: 'Cremoso de chocolate blanco tostado y duraznos de Drummond', price: 15000, std: 'Martino Rosé Extra Brut', upg: 'Martino Espumoso Millésimé' },
+      { id: 'sp_d4', name: 'Selección de quesos de autor y dulces artesanales mendocinos', price: 16000, std: 'Baldomir Gran Reserva Digestif', upg: 'Baldomir Gran Malbec' }
     ],
     pasosConfig: {
-      carta: { name: 'A la Carta', price: 0, tag: '🌸 Carta' },
-      '2pasos': { name: 'Menú 2 Pasos', price: 42000, tag: '🍽️ 2 Pasos' },
-      '3pasos': { name: 'Menú 3 Pasos', price: 49000, tag: '🍽️ 3 Pasos' },
-      '4pasos': { name: 'Menú 4 Pasos', price: 54000, tag: '🍽️ 4 Pasos' },
-      '7pasos': { name: 'Menú 7 Pasos', price: 58000, tag: '🍂 7 Pasos' }
+      carta: { name: 'A la Carta', price: 0, tag: '🍷 Carta' },
+      '2pasos': { name: 'Menú 2 Pasos', price: 44000, tag: '🍽️ 2 Pasos' },
+      '3pasos': { name: 'Menú 3 Pasos (Almuerzo)', price: 52000, tag: '🍽️ 3 Pasos' },
+      '4pasos': { name: 'Menú 4 Pasos (Estación)', price: 58000, tag: '🌿 4 Pasos' },
+      '7pasos': { name: 'Menú 7 Pasos (Experiencia 1901)', price: 69000, tag: '✨ 7 Pasos' }
     },
     pasos7Defaults: [
-      { paso: 1, name: 'Paso 1: Queso de cabra · Chutney · Hierbas', entregado: false },
-      { paso: 2, name: 'Paso 2: Gírgola · Calabaza · Nueces', entregado: false },
-      { paso: 3, name: 'Paso 3: Molleja · Coliflor · Manzana · AOVE Lamadrid', entregado: false },
-      { paso: 4, name: 'Paso 4: Empanada Los Bocheros (Especialidad del Chef)', entregado: false },
-      { paso: 5, name: 'Paso 5: Ojo de Bife con vegetales de estación', isMeat: true, doneness: 'A Punto', entregado: false },
-      { paso: 6, name: 'Paso 6: Yogurt artesanal, frambuesas y crocantes', entregado: false },
-      { paso: 7, name: 'Paso 7: Chocolate amargo, toffee y texturas', entregado: false }
+      { paso: 1, name: 'Paso 1: Snack · Tartar de trucha curada y emulsión fresca', entregado: false },
+      { paso: 2, name: 'Paso 2: Remolacha de la huerta al rescoldo · Queso de cabra', entregado: false },
+      { paso: 3, name: 'Paso 3: Empanadilla de chivo al sarmiento y salsa llajwa', entregado: false },
+      { paso: 4, name: 'Paso 4: Mollejas crocantes en reducción Baldomir y coliflor', entregado: false },
+      { paso: 5, name: 'Paso 5: Ojo de Bife madurado al sarmiento con papas fondant', isMeat: true, doneness: 'A Punto', entregado: false },
+      { paso: 6, name: 'Paso 6: Granita refrescante de Pedro Ximénez y hierbas', entregado: false },
+      { paso: 7, name: 'Paso 7: Húmedo de chocolate amargo 70%, frutos rojos y pistacho', entregado: false }
     ]
   };
 
-  // --- 2. Definición de Sectores y Mesas ---
+  // --- 2. Definición de Sectores y Mesas de Martino Wines ---
   const SECTORS_DEF = [
-    { id: 'terraza', name: '🌿 Terraza Viñedos', tables: [1, 2, 3, 4, 5] },
-    { id: 'galeria', name: '🧱 Galería Adobe', tables: [6, 7, 8, 9, 10] },
-    { id: 'salon', name: '🍷 Salón Barricas', tables: [11, 12, 13, 14] },
-    { id: 'pergola', name: '🍇 Pérgola Las Compuertas', tables: [15, 16] }
+    { id: 'salon1901', name: '🍷 Cava & Salón 1901', tables: [1, 2, 3, 4, 5] },
+    { id: 'galeria', name: '🌿 Galería & Olivos', tables: [6, 7, 8, 9, 10] },
+    { id: 'terraza', name: '🍇 Terraza Viñedos', tables: [11, 12, 13, 14] },
+    { id: 'privado', name: '🪵 Cava de Barricas (Privado)', tables: [15, 16] }
   ];
 
   // Helper para generar comensal predeterminado
@@ -66,16 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
       tipoMenu: '3pasos', // 'carta' | '2pasos' | '3pasos' | '4pasos' | '7pasos'
       collapsed: false,
       entradas: [
-        { id: 'sp_e2', entregado: false } // Provoleta por defecto
+        { id: 'sp_e2', entregado: false } // Remolacha asada por defecto
       ],
       principales: [
-        { id: 'sp_p4', doneness: 'A Punto', entregado: false } // Ojo de bife por defecto
+        { id: 'sp_p1', doneness: 'A Punto', entregado: false } // Ojo de bife madurado por defecto
       ],
       postres: [
-        { id: 'sp_d2', entregado: false } // Tarta flan por defecto
+        { id: 'sp_d1', entregado: false } // Húmedo de chocolate por defecto
       ],
       intermedios: [
-        { id: 'sp_e1', entregado: false } // Plato intermedio para 4 pasos
+        { id: 'sp_e1', entregado: false } // Empanadilla de chivo para 4 pasos
       ],
       pasos7: JSON.parse(JSON.stringify(MENU_CATALOG.pasos7Defaults)),
       maridaje: 'standard', // 'none' | 'standard' | 'upgrade'
@@ -86,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 3. Inicialización y Persistencia en LocalStorage ---
   let tablesData = {};
-  const savedTables = localStorage.getItem('bocheros_mesas_v3');
+  const savedTables = localStorage.getItem('martino_mesas_v1') || localStorage.getItem('bocheros_mesas_v3');
   if (savedTables) {
     try {
       tablesData = JSON.parse(savedTables);
@@ -115,6 +117,9 @@ document.addEventListener('DOMContentLoaded', () => {
       };
     } else {
       // Migración o normalización de comensales si venían de versión anterior
+      const sec = SECTORS_DEF.find(s => s.tables.includes(i));
+      if (sec) tablesData[i].sector = sec.name;
+
       if (!tablesData[i].waterService) {
         tablesData[i].waterService = { lastServedAt: Date.now() };
       }
@@ -127,19 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
           if (c.collapsed === undefined) c.collapsed = false;
 
           // Normalizar arreglos de platos
-          if (!c.entradas) {
-            c.entradas = [{ id: c.entradaId || 'sp_e2', entregado: false }];
+          if (!c.entradas || c.entradas.length === 0) {
+            c.entradas = [{ id: 'sp_e2', entregado: false }];
           }
-          if (!c.principales) {
-            c.principales = [{ id: c.principalId || 'sp_p4', doneness: c.doneness || 'A Punto', entregado: false }];
+          if (!c.principales || c.principales.length === 0) {
+            c.principales = [{ id: 'sp_p1', doneness: 'A Punto', entregado: false }];
           }
-          if (!c.postres) {
-            c.postres = [{ id: c.postreId || 'sp_d2', entregado: false }];
+          if (!c.postres || c.postres.length === 0) {
+            c.postres = [{ id: 'sp_d1', entregado: false }];
           }
-          if (!c.intermedios) {
+          if (!c.intermedios || c.intermedios.length === 0) {
             c.intermedios = [{ id: 'sp_e1', entregado: false }];
           }
-          if (!c.pasos7 || c.pasos7.length === 0) {
+          if (!c.pasos7 || c.pasos7.length === 0 || !c.pasos7[0].name.includes('Martino') && !c.pasos7[0].name.includes('Snack')) {
             c.pasos7 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos7Defaults));
           }
         });
@@ -148,13 +153,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveTablesState() {
-    localStorage.setItem('bocheros_mesas_v3', JSON.stringify(tablesData));
+    localStorage.setItem('martino_mesas_v1', JSON.stringify(tablesData));
   }
 
   // Active state
   let activeTableId = 1;
-  let targetWhatsAppNumber = localStorage.getItem('bocheros_wa_number') || '';
-  let activeMozoName = localStorage.getItem('bocheros_mozo_name') || 'Máximo';
+  let targetWhatsAppNumber = localStorage.getItem('martino_wa_number') || localStorage.getItem('bocheros_wa_number') || '';
+  let activeMozoName = localStorage.getItem('martino_mozo_name') || localStorage.getItem('bocheros_mozo_name') || 'Máximo';
 
   // --- 4. Elementos del DOM ---
   const panelMapaMesas = document.getElementById('panel-mapa-mesas');
@@ -645,24 +650,24 @@ document.addEventListener('DOMContentLoaded', () => {
           <label class="menu-selector-label">Modalidad de Menú:</label>
           <div class="menu-type-selector-5">
             <button class="btn-step-option ${comensal.tipoMenu === 'carta' ? 'active' : ''}" data-type="carta" data-cidx="${idx}">
-              <span>🌸 Carta</span>
+              <span>🍷 Carta</span>
               <span class="step-price-sub">Por plato</span>
             </button>
             <button class="btn-step-option ${comensal.tipoMenu === '2pasos' ? 'active' : ''}" data-type="2pasos" data-cidx="${idx}">
               <span>🍽️ 2 Pasos</span>
-              <span class="step-price-sub">$42.000</span>
+              <span class="step-price-sub">$44.000</span>
             </button>
             <button class="btn-step-option ${comensal.tipoMenu === '3pasos' ? 'active' : ''}" data-type="3pasos" data-cidx="${idx}">
               <span>🍽️ 3 Pasos</span>
-              <span class="step-price-sub">$49.000</span>
+              <span class="step-price-sub">$52.000</span>
             </button>
             <button class="btn-step-option ${comensal.tipoMenu === '4pasos' ? 'active' : ''}" data-type="4pasos" data-cidx="${idx}">
-              <span>🍽️ 4 Pasos</span>
-              <span class="step-price-sub">$54.000</span>
+              <span>🌿 4 Pasos</span>
+              <span class="step-price-sub">$58.000</span>
             </button>
             <button class="btn-step-option ${comensal.tipoMenu === '7pasos' ? 'active' : ''}" data-type="7pasos" data-cidx="${idx}">
-              <span>🍂 7 Pasos</span>
-              <span class="step-price-sub">$58.000</span>
+              <span>✨ 7 Pasos</span>
+              <span class="step-price-sub">$69.000</span>
             </button>
           </div>
         </div>
@@ -704,8 +709,8 @@ document.addEventListener('DOMContentLoaded', () => {
         foodContentHTML = `
           <div class="otono-7pasos-card">
             <div class="otono-7pasos-header">
-              <span class="otono-7pasos-title">🍂 Menú Degustación Otoño 7 Pasos</span>
-              <span class="otono-7pasos-price">$58.000</span>
+              <span class="otono-7pasos-title">✨ Menú Degustación Bodega 1901 (7 Pasos)</span>
+              <span class="otono-7pasos-price">$69.000</span>
             </div>
             <div class="pasos-7-list">
               ${pasosItemsHTML}
@@ -1239,7 +1244,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const water = getWaterServiceStatus(table);
 
     // Armar mensaje formateado
-    let msg = `🍷 *COMANDA · LOS BOCHEROS RESTÓ*\n`;
+    let msg = `🍷 *COMANDA · MARTINO WINES RESTAURANTE*\n`;
+    msg += `⭐ _Guía MICHELIN Selection · Mayor Drummond, Mendoza_\n`;
     msg += `📍 *${table.name.toUpperCase()}* (${table.sector})\n`;
     msg += `🤵 *Mozo:* ${activeMozoName}\n`;
     msg += `🕒 *Hora:* ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} | 👥 *${table.comensales.length} Comensales*\n`;
@@ -1368,10 +1374,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     targetWhatsAppNumber = val;
-    localStorage.setItem('bocheros_wa_number', targetWhatsAppNumber);
+    localStorage.setItem('martino_wa_number', targetWhatsAppNumber);
 
     activeMozoName = inputMozoName.value.trim() || 'Máximo';
-    localStorage.setItem('bocheros_mozo_name', activeMozoName);
+    localStorage.setItem('martino_mozo_name', activeMozoName);
 
     updateWaTargetDisplay();
     modalWaConfig.style.display = 'none';

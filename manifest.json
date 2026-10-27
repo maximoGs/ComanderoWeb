@@ -1,21 +1,16 @@
 {
-  "name": "Los Bocheros Restó · Herramienta de Pedidos",
-  "short_name": "Pedidos Bocheros",
-  "description": "App de comandas y pedidos para mozos de Los Bocheros Restó - Lamadrid Estate Wines",
+  "name": "Martino Wines · Comandas & Servicio de Salón",
+  "short_name": "Martino Comandas",
+  "description": "App de comandas y pedidos para mozos de Martino Wines Restaurante - Mayor Drummond, Luján de Cuyo",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0d2644",
-  "theme_color": "#153b66",
+  "background_color": "#141312",
+  "theme_color": "#141312",
   "icons": [
     {
-      "src": "assets/lamadrid-logo.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "assets/lamadrid-logo.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "src": "assets/martino-logo.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
     }
   ]
 }
