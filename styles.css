@@ -2416,6 +2416,41 @@ body.dark-theme .filter-pill.active {
   transform: translateY(-1px);
 }
 
+.btn-clean-salon {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-clean-salon:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: #ef4444;
+  color: #ef4444;
+}
+
+body.dark-theme .btn-clean-salon {
+  background: #191816 !important;
+  border-color: #3d3933 !important;
+  color: #a39c92 !important;
+}
+
+body.dark-theme .btn-clean-salon:hover {
+  background: rgba(239, 68, 68, 0.2) !important;
+  border-color: #ef4444 !important;
+  color: #fca5a5 !important;
+}
+
 /* Botón rápido "+ Mesa" en cabecera de cada sector */
 .btn-quick-add-sector {
   background: rgba(212, 175, 55, 0.12);

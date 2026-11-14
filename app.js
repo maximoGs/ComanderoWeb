@@ -96,6 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
     { code: 'Bin T-2-01', wine: 'Martino Extra Brut Champenoise', sector: 'Cava Climatizada Fría', rack: 'Estante T · Fila 2', stock: 36, temp: '8.5°C' }
   ];
 
+  // Claves de Caché Local por Dispositivo
+  const CACHE_KEY_MESAS = 'martino_mesas_v4';
+  const CACHE_KEY_SECTORES = 'martino_sectors_v4';
+
   // --- 2. Sectores y Mesas Dinámicos ---
   let SECTORS_DEF = [
     { id: 'salon1901', name: '🍷 Cava & Salón 1901', tables: [1, 2, 3, 4, 5] },
@@ -104,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
     { id: 'privado', name: '🪵 Cava de Barricas (Privado)', tables: [15, 16] }
   ];
 
-  const savedSectors = localStorage.getItem('martino_sectors_v2');
+  const savedSectors = localStorage.getItem(CACHE_KEY_SECTORES);
   if (savedSectors) {
     try {
       const parsedSec = JSON.parse(savedSectors);
@@ -117,7 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function saveSectorsState() {
-    localStorage.setItem('martino_sectors_v2', JSON.stringify(SECTORS_DEF));
+    localStorage.setItem(CACHE_KEY_SECTORES, JSON.stringify(SECTORS_DEF));
   }
 
   // Helper para generar comensal predeterminado
@@ -138,9 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
   }
 
-  // --- 3. Inicialización y Persistencia ---
+  // --- 3. Inicialización y Persistencia en Caché de Dispositivo ---
   let tablesData = {};
-  const savedTables = localStorage.getItem('martino_mesas_v2') || localStorage.getItem('martino_mesas_v1') || localStorage.getItem('bocheros_mesas_v3');
+  const savedTables = localStorage.getItem(CACHE_KEY_MESAS);
   if (savedTables) {
     try {
       tablesData = JSON.parse(savedTables);
@@ -149,11 +153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Inicializar mesas 1 a 16 base con pacing y agua
-  const realisticStaggers = [0, 8, 14, 22, 6, 18, 27, 4, 12, 19, 9, 16, 26, 7, 13, 21];
+  // Inicializar mesas 1 a 16 100% LIMPIAS por defecto (Libres, sin comensales falsos)
   for (let i = 1; i <= 16; i++) {
     const sec = SECTORS_DEF.find(s => s.tables.includes(i));
-    const staggerMins = realisticStaggers[(i - 1) % 16];
 
     if (!tablesData[i]) {
       tablesData[i] = {
@@ -161,19 +163,16 @@ document.addEventListener('DOMContentLoaded', () => {
         name: `Mesa ${i}`,
         sector: sec ? sec.name : 'General',
         sectorId: sec ? sec.id : 'salon1901',
-        openedAt: new Date(Date.now() - staggerMins * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        openedAt: '',
         waterService: {
-          lastServedAt: Date.now() - (i % 3) * 11 * 60 * 1000
+          lastServedAt: Date.now()
         },
         pacing: {
-          currentStepIndex: (i % 4), // pasos variados
-          lastServedAt: Date.now() - staggerMins * 60 * 1000,
+          currentStepIndex: 0,
+          lastServedAt: Date.now(),
           history: []
         },
-        comensales: [
-          createDefaultComensal(1),
-          createDefaultComensal(2)
-        ],
+        comensales: [], // ¡Predeterminado e inicial limpio!
         bebidas: []
       };
     }
@@ -205,24 +204,25 @@ document.addEventListener('DOMContentLoaded', () => {
         history: []
       };
     }
-    // Migración de datos existentes a nuevos menús 5 / 8 / 3 pasos
-    if (tablesData[i].comensales) {
-      tablesData[i].comensales.forEach(c => {
-        if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
-        if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
-        if (c.tipoMenu === '7pasos' || c.tipoMenu === '4pasos' || !c.tipoMenu) {
-          c.tipoMenu = '5pasos';
-        } else if (c.tipoMenu === '2pasos') {
-          c.tipoMenu = '3pasos';
-        }
-      });
+    if (!tablesData[i].comensales) {
+      tablesData[i].comensales = [];
     }
+    // Migración de datos existentes a nuevos menús 5 / 8 / 3 pasos
+    tablesData[i].comensales.forEach(c => {
+      if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
+      if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
+      if (c.tipoMenu === '7pasos' || c.tipoMenu === '4pasos' || !c.tipoMenu) {
+        c.tipoMenu = '5pasos';
+      } else if (c.tipoMenu === '2pasos') {
+        c.tipoMenu = '3pasos';
+      }
+    });
   });
 
   saveSectorsState();
 
   function saveTablesState() {
-    localStorage.setItem('martino_mesas_v2', JSON.stringify(tablesData));
+    localStorage.setItem(CACHE_KEY_MESAS, JSON.stringify(tablesData));
   }
 
   // Log de Auditoría de Alérgenos (Mecánica 3)
@@ -289,6 +289,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const sectorFiltersWrap = document.getElementById('sector-filters-wrap');
   const sectorsContainer = document.getElementById('sectors-container');
   const btnOpenAddMesa = document.getElementById('btn-open-add-mesa');
+  const btnResetSalon = document.getElementById('btn-reset-salon');
 
   // Modal Agregar Mesa
   const modalAddMesa = document.getElementById('modal-add-mesa');
@@ -301,6 +302,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputNewSectorName = document.getElementById('input-new-sector-name');
   const selectNewMesaMenu = document.getElementById('select-new-mesa-menu');
   const btnEliminarMesa = document.getElementById('btn-eliminar-mesa');
+  let selectedNewMesaDiners = 2;
 
   // Mesa Comanda Navigation
   const btnGoMap = document.getElementById('btn-go-map');
@@ -453,9 +455,20 @@ document.addEventListener('DOMContentLoaded', () => {
    * Resumen pequeño de por cuál plato va
    */
   function getTableCourseSummary(table) {
+    if (!table.comensales || table.comensales.length === 0) {
+      return {
+        text: 'Mesa Libre',
+        stepNum: 0,
+        totalSteps: 0,
+        isFinished: false,
+        currentStepName: 'Mesa Libre · Sin comensales',
+        dishHighlight: 'Libre'
+      };
+    }
+
     const plan = getTableCoursePlan(table);
     const currentIdx = Math.min(table.pacing.currentStepIndex || 0, plan.length - 1);
-    const currentStep = plan[currentIdx];
+    const currentStep = plan[currentIdx] || plan[0];
     const totalSteps = plan.length;
 
     if (table.pacing.currentStepIndex >= plan.length) {
@@ -483,6 +496,21 @@ document.addEventListener('DOMContentLoaded', () => {
    * Cálculo de Pacing y Cronómetro Michelin (0-15m / 15-25m / >25m)
    */
   function getTablePacingStatus(table) {
+    if (!table.comensales || table.comensales.length === 0) {
+      return {
+        mins: 0,
+        secs: 0,
+        elapsedStr: '0m',
+        shortStr: 'Libre',
+        statusText: 'Mesa Libre · Lista para servicio',
+        phase: 'libre',
+        chipText: '⚪ LIBRE',
+        color: '#a39c92',
+        bg: 'rgba(255, 255, 255, 0.06)',
+        isAlert: false
+      };
+    }
+
     if (!table.pacing || !table.pacing.lastServedAt) {
       table.pacing = {
         currentStepIndex: 0,
@@ -542,6 +570,17 @@ document.addEventListener('DOMContentLoaded', () => {
    * Servicio de Agua de Mesa
    */
   function getWaterServiceStatus(table) {
+    if (!table.comensales || table.comensales.length === 0) {
+      return {
+        levelPercent: 100,
+        chipText: '100% OK',
+        mins: 0,
+        statusText: 'Mesa Libre · Agua lista',
+        miniBg: 'rgba(255, 255, 255, 0.08)',
+        isAlert: false
+      };
+    }
+
     if (!table.waterService || !table.waterService.lastServedAt) {
       table.waterService = { lastServedAt: Date.now() };
     }
@@ -565,6 +604,12 @@ document.addEventListener('DOMContentLoaded', () => {
   function bajarPlatoAvanzarPaso(tableId) {
     const table = tablesData[tableId];
     if (!table) return;
+
+    if (!table.comensales || table.comensales.length === 0) {
+      showToast(`${table.name} está libre. Abre la mesa para asignar comensales.`, 'ℹ️');
+      showComanda(tableId);
+      return;
+    }
 
     const plan = getTableCoursePlan(table);
     const currentIdx = table.pacing.currentStepIndex || 0;
@@ -821,45 +866,57 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacingMarchar = 0;
     let pacingDemora = 0;
     let totalDiners = 0;
+    let occupiedTables = 0;
 
     const tableIds = Object.keys(tablesData).map(Number).sort((a, b) => a - b);
     for (const i of tableIds) {
       const t = tablesData[i];
       if (t) {
-        // Agua
-        const w = getWaterServiceStatus(t);
-        if (w.isAlert) waterAlerts++;
-        else if (w.levelPercent <= 50) waterReview++;
+        const isOccupied = (t.comensales && t.comensales.length > 0) || (t.bebidas && t.bebidas.length > 0);
+        if (isOccupied) {
+          occupiedTables++;
+          if (t.comensales) totalDiners += t.comensales.length;
 
-        // Pacing
-        const p = getTablePacingStatus(t);
-        if (p.phase === 'optimo') pacingOptimo++;
-        else if (p.phase === 'marchar') pacingMarchar++;
-        else pacingDemora++;
+          // Agua
+          const w = getWaterServiceStatus(t);
+          if (w.isAlert) waterAlerts++;
+          else if (w.levelPercent <= 50) waterReview++;
 
-        // Comensales
-        if (t.comensales) totalDiners += t.comensales.length;
+          // Pacing
+          const p = getTablePacingStatus(t);
+          if (p.phase === 'optimo') pacingOptimo++;
+          else if (p.phase === 'marchar') pacingMarchar++;
+          else if (p.phase === 'demora') pacingDemora++;
+        }
       }
     }
 
     // Actualizar badges
-    if (waterAlerts > 0) {
-      waterSalonSummary.textContent = `${waterAlerts} sin agua ⚠️`;
-      waterSalonSummary.style.color = '#ef4444';
-    } else if (waterReview > 0) {
-      waterSalonSummary.textContent = `${waterReview} por recargar`;
-      waterSalonSummary.style.color = '#f59e0b';
-    } else {
+    if (occupiedTables === 0) {
       waterSalonSummary.textContent = 'Salón al 100% de agua';
       waterSalonSummary.style.color = '#10b981';
+      pacingSalonSummary.textContent = 'Salón Listo · Mesas Disponibles';
+      pacingSalonSummary.style.color = '#10b981';
+      dinersSalonSummary.textContent = '0 Huéspedes activos';
+    } else {
+      if (waterAlerts > 0) {
+        waterSalonSummary.textContent = `${waterAlerts} sin agua ⚠️`;
+        waterSalonSummary.style.color = '#ef4444';
+      } else if (waterReview > 0) {
+        waterSalonSummary.textContent = `${waterReview} por recargar`;
+        waterSalonSummary.style.color = '#f59e0b';
+      } else {
+        waterSalonSummary.textContent = 'Salón al 100% de agua';
+        waterSalonSummary.style.color = '#10b981';
+      }
+
+      pacingSalonSummary.textContent = `${pacingOptimo} Óptimo · ${pacingMarchar} Marchar · ${pacingDemora} Demora`;
+      if (pacingDemora > 0) pacingSalonSummary.style.color = '#ef4444';
+      else if (pacingMarchar > 0) pacingSalonSummary.style.color = '#f59e0b';
+      else pacingSalonSummary.style.color = '#10b981';
+
+      dinersSalonSummary.textContent = `${totalDiners} Huéspedes activos`;
     }
-
-    pacingSalonSummary.textContent = `${pacingOptimo} Óptimo · ${pacingMarchar} Marchar · ${pacingDemora} Demora`;
-    if (pacingDemora > 0) pacingSalonSummary.style.color = '#ef4444';
-    else if (pacingMarchar > 0) pacingSalonSummary.style.color = '#f59e0b';
-    else pacingSalonSummary.style.color = '#10b981';
-
-    dinersSalonSummary.textContent = `${totalDiners} Huéspedes activos`;
   }
 
   /**
@@ -1166,7 +1223,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!table) return;
 
     titleActiveTable.textContent = `${table.name} · ${table.sector}`;
-    labelTableTime.textContent = `Abierta: ${table.openedAt}`;
+    labelTableTime.textContent = table.openedAt ? `Abierta: ${table.openedAt}` : 'Mesa Libre';
 
     // Render Pacing Hero Card
     renderMesaPacingHero(table);
@@ -1176,9 +1233,57 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Diners List
     comensalesList.innerHTML = '';
-    table.comensales.forEach((comensal, idx) => {
-      renderComensalCard(table, comensal, idx);
-    });
+    if (!table.comensales || table.comensales.length === 0) {
+      const emptyDiv = document.createElement('div');
+      emptyDiv.className = 'comensal-empty-state';
+      emptyDiv.style.cssText = 'text-align: center; padding: 1.8rem 1rem; color: #a39c92; background: #1c1b18; border: 1px dashed #3d3933; border-radius: var(--radius-md); margin-bottom: 1rem;';
+      emptyDiv.innerHTML = `
+        <div style="font-size: 2rem; margin-bottom: 0.4rem;">🍽️</div>
+        <div style="font-size: 0.95rem; font-weight: 700; color: #f5f2eb; margin-bottom: 0.25rem;">Mesa Lista y Libre</div>
+        <p style="font-size: 0.78rem; margin-bottom: 1rem;">No hay comensales sentados aún. Elige un menú rápido o sienta comensales:</p>
+        <div style="display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap;">
+          <button class="btn-step-option active" id="btn-quick-seat-2" style="background: var(--gold-accent); color: #121212; font-weight: 800; padding: 0.45rem 1rem; border-radius: var(--radius-full); cursor: pointer; border: none;">
+            👥 Sentar 2 Comensales
+          </button>
+          <button class="btn-step-option" id="btn-quick-seat-4" style="background: #25231f; border: 1px solid #3d3933; color: #f5f2eb; font-weight: 700; padding: 0.45rem 1rem; border-radius: var(--radius-full); cursor: pointer;">
+            👥 Sentar 4 Comensales
+          </button>
+        </div>
+      `;
+      comensalesList.appendChild(emptyDiv);
+
+      const seat2 = emptyDiv.querySelector('#btn-quick-seat-2');
+      if (seat2) {
+        seat2.addEventListener('click', () => {
+          table.comensales = [createDefaultComensal(1), createDefaultComensal(2)];
+          table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          table.waterService = { lastServedAt: Date.now() };
+          table.pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
+          saveTablesState();
+          renderComandaMesa();
+          showToast(`2 comensales sentados en ${table.name}`, '👥');
+        });
+      }
+      const seat4 = emptyDiv.querySelector('#btn-quick-seat-4');
+      if (seat4) {
+        seat4.addEventListener('click', () => {
+          table.comensales = [
+            createDefaultComensal(1), createDefaultComensal(2),
+            createDefaultComensal(3), createDefaultComensal(4)
+          ];
+          table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          table.waterService = { lastServedAt: Date.now() };
+          table.pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
+          saveTablesState();
+          renderComandaMesa();
+          showToast(`4 comensales sentados en ${table.name}`, '👥');
+        });
+      }
+    } else {
+      table.comensales.forEach((comensal, idx) => {
+        renderComensalCard(table, comensal, idx);
+      });
+    }
 
     renderSharedDrinks();
     updateSummaryFooter();
@@ -1765,7 +1870,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function addComensalToTable() {
     const table = tablesData[activeTableId];
-    const nextNum = (table.comensales.length || 0) + 1;
+    if (!table) return;
+    if (!table.comensales) table.comensales = [];
+    if (table.comensales.length === 0 && !table.openedAt) {
+      table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      table.waterService = { lastServedAt: Date.now() };
+      table.pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
+    }
+    const nextNum = table.comensales.length + 1;
     table.comensales.push(createDefaultComensal(nextNum));
     saveTablesState();
     renderComandaMesa();
@@ -1838,15 +1950,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnVaciarMesa.addEventListener('click', () => {
     const table = tablesData[activeTableId];
-    if (confirm(`¿Reiniciar y vaciar ${table.name}?`)) {
-      table.comensales = [createDefaultComensal(1), createDefaultComensal(2)];
+    if (!table) return;
+    if (confirm(`¿Reiniciar y vaciar ${table.name}? Quedará libre y sin comensales.`)) {
+      table.comensales = [];
       table.bebidas = [];
       table.pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
-      table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      table.openedAt = '';
       table.waterService = { lastServedAt: Date.now() };
       saveTablesState();
       renderComandaMesa();
-      showToast(`${table.name} reiniciada`, '🗑️');
+      showToast(`${table.name} vaciada y libre`, '🧹');
     }
   });
 
@@ -1855,12 +1968,19 @@ document.addEventListener('DOMContentLoaded', () => {
     btn.addEventListener('click', () => {
       const preset = btn.getAttribute('data-preset');
       const table = tablesData[activeTableId];
-      if (!table || !table.comensales) return;
-      table.comensales.forEach(c => {
-        c.tipoMenu = preset;
-        if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
-        if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
-      });
+      if (!table) return;
+      if (!table.comensales || table.comensales.length === 0) {
+        table.openedAt = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        table.waterService = { lastServedAt: Date.now() };
+        table.pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
+        table.comensales = [createDefaultComensal(1, preset), createDefaultComensal(2, preset)];
+      } else {
+        table.comensales.forEach(c => {
+          c.tipoMenu = preset;
+          if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
+          if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
+        });
+      }
       saveTablesState();
       renderComandaMesa();
       const conf = MENU_CATALOG.pasosConfig[preset] || { name: preset };
@@ -2139,12 +2259,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- 19. WhatsApp Modal Settings ---
   function updateWaTargetDisplay() {
+    const waSendTargetLabel = document.getElementById('wa-send-target-label');
     if (targetWhatsAppNumber) {
-      waNumDisplay.textContent = `WA: ${targetWhatsAppNumber}`;
-      waSendTargetLabel.textContent = `Enviar a WhatsApp: ${targetWhatsAppNumber}`;
+      if (waNumDisplay) waNumDisplay.textContent = `WA: ${targetWhatsAppNumber}`;
+      if (waSendTargetLabel) waSendTargetLabel.textContent = `Enviar a WhatsApp: ${targetWhatsAppNumber}`;
     } else {
-      waNumDisplay.textContent = 'Configurar WA';
-      waSendTargetLabel.textContent = 'Pulsa para configurar WhatsApp';
+      if (waNumDisplay) waNumDisplay.textContent = 'Configurar WA';
+      if (waSendTargetLabel) waSendTargetLabel.textContent = 'Pulsa para configurar WhatsApp';
     }
   }
   updateWaTargetDisplay();
@@ -2180,8 +2301,6 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // --- 19B. GESTIÓN Y CREACIÓN DE MESAS DINÁMICAS ---
-  let selectedNewMesaDiners = 2;
-
   function addNewTable({ name, sectorId, customSectorName, dinerCount, initialMenu }) {
     const existingIds = Object.keys(tablesData).map(Number);
     const nextNum = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
@@ -2215,13 +2334,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const finalName = name || `Mesa ${newId}`;
+    const isFree = !dinerCount || dinerCount === 0;
 
     tablesData[newId] = {
       id: newId,
       name: finalName,
       sector: targetSector.name,
       sectorId: targetSector.id,
-      openedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      openedAt: isFree ? '' : new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       waterService: {
         lastServedAt: Date.now()
       },
@@ -2230,7 +2350,7 @@ document.addEventListener('DOMContentLoaded', () => {
         lastServedAt: Date.now(),
         history: []
       },
-      comensales: Array.from({ length: dinerCount || 2 }, (_, idx) => 
+      comensales: isFree ? [] : Array.from({ length: dinerCount }, (_, idx) => 
         createDefaultComensal(idx + 1, initialMenu || '5pasos')
       ),
       bebidas: []
@@ -2381,6 +2501,26 @@ document.addEventListener('DOMContentLoaded', () => {
         deleteTable(activeTableId);
       }
     });
+  }
+
+  if (btnResetSalon) {
+    btnResetSalon.addEventListener('click', resetAllTablesToClean);
+  }
+
+  function resetAllTablesToClean() {
+    if (!confirm('¿Deseas reiniciar y limpiar todas las mesas del salón? Quedarán libres y sin comandas.')) return;
+    Object.keys(tablesData).forEach(idStr => {
+      const i = parseInt(idStr, 10);
+      tablesData[i].comensales = [];
+      tablesData[i].bebidas = [];
+      tablesData[i].openedAt = '';
+      tablesData[i].waterService = { lastServedAt: Date.now() };
+      tablesData[i].pacing = { currentStepIndex: 0, lastServedAt: Date.now(), history: [] };
+    });
+    saveTablesState();
+    renderMapaMesas();
+    updateSalonMetricsBanner();
+    showToast('Salón reiniciado y limpio para el servicio', '🧹');
   }
 
   // --- 20. CRONÓMETRO Y TICKER EN TIEMPO REAL (CADA SEGUNDO) ---

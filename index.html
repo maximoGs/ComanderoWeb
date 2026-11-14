@@ -133,12 +133,15 @@
           <button class="filter-pill" data-sec="privado">🪵 Cava Barricas (15-16)</button>
         </div>
 
-        <!-- Pacing Filter Pills -->
+        <!-- Pacing Filter Pills & Salon Actions -->
         <div class="pacing-filter-group">
           <button class="pacing-pill-filter active" data-pacing="all">Todos los tiempos</button>
           <button class="pacing-pill-filter alert-filter" data-pacing="alert">⚠️ Marchar / Demora</button>
           <button class="btn-add-mesa" id="btn-open-add-mesa" title="Agregar una nueva mesa al restaurante">
             ➕ Nueva Mesa
+          </button>
+          <button class="btn-clean-salon" id="btn-reset-salon" title="Reiniciar y limpiar todas las mesas del salón">
+            🧹 Limpiar
           </button>
         </div>
       </div>
@@ -726,6 +729,7 @@
         <div class="input-wa-group">
           <label>Cantidad Inicial de Comensales:</label>
           <div class="quick-diners-selector-row" id="diners-selector-group">
+            <button type="button" class="btn-step-option diner-choice-btn" data-diners="0">0 (Libre)</button>
             <button type="button" class="btn-step-option diner-choice-btn" data-diners="1">1 Pax</button>
             <button type="button" class="btn-step-option diner-choice-btn active" data-diners="2">2 Pax</button>
             <button type="button" class="btn-step-option diner-choice-btn" data-diners="4">4 Pax</button>
