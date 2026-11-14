@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Martino Wines · Comandas & Servicio de Salón</title>
+  <title>Martino Wines 1901 · Ecosistema de Alta Gastronomía & Comandas</title>
   
   <!-- PWA & Mobile Meta Tags -->
-  <meta name="theme-color" content="#141312">
+  <meta name="theme-color" content="#121212">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <link rel="manifest" href="manifest.json">
@@ -15,11 +15,11 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cinzel:wght@600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Cinzel:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
   
   <link rel="stylesheet" href="styles.css">
 </head>
-<body class="simple-app">
+<body class="simple-app dark-theme">
   <!-- Top Bar -->
   <header class="main-bar">
     <div class="bar-container">
@@ -27,49 +27,127 @@
         <img src="assets/martino-logo.svg" alt="Martino Wines" class="bar-logo">
         <div class="brand-text">
           <span class="brand-title">MARTINO WINES</span>
-          <span class="brand-sub">MENDOZA 1901 · RESTÓ</span>
+          <span class="brand-sub">MENDOZA 1901 · MICHELIN GUIDE</span>
         </div>
       </div>
 
       <div class="bar-actions">
+        <!-- Edge Local-First Indicator (Mecánica 2) -->
+        <div class="edge-status-pill" id="edge-status-indicator" title="Red Mesh Edge Local-First · Latencia LAN 0.8ms · Resiliencia Offline Activa">
+          <span class="edge-dot"></span>
+          <span class="edge-label">EDGE LOCAL 0.8ms</span>
+        </div>
+
+        <!-- Fine Dining Dark Mode Switcher (Mecánica 4) -->
+        <button class="btn-theme-toggle" id="btn-toggle-dark" title="Alternar Modo Oscuro Fine Dining (#121212) / Modo Cava 1901">
+          <span id="theme-toggle-icon">🌙</span>
+        </button>
+
         <!-- Current WhatsApp target indicator -->
         <button class="btn-wa-config" id="btn-open-wa-config" title="Configurar número de WhatsApp para comanda">
           <span class="wa-dot"></span>
-          <span class="wa-num-preview" id="wa-num-display">Configurar WhatsApp</span>
+          <span class="wa-num-preview" id="wa-num-display">Configurar WA</span>
           <span class="gear-icon">⚙️</span>
         </button>
       </div>
     </div>
+
+    <!-- Navigation Tabs Bar (Ecosistema FOH / BOH) -->
+    <nav class="sub-nav-bar">
+      <div class="nav-tabs-container">
+        <button class="nav-tab-btn active" data-tab="salon" id="tab-btn-salon">
+          <span class="tab-icon">🗺️</span>
+          <span>Salón FOH</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="kds" id="tab-btn-kds">
+          <span class="tab-icon">🍳</span>
+          <span>Pase KDS Cocina</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="alergenos" id="tab-btn-alergenos">
+          <span class="tab-icon">🛡️</span>
+          <span>Alérgenos & Auditoría</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="bodega" id="tab-btn-bodega">
+          <span class="tab-icon">🍷</span>
+          <span>Cava & Bins</span>
+        </button>
+        <button class="nav-tab-btn" data-tab="blueprint" id="tab-btn-blueprint">
+          <span class="tab-icon">🏛️</span>
+          <span>Blueprint Michelin</span>
+        </button>
+      </div>
+    </nav>
   </header>
 
   <!-- Main Container -->
   <main class="app-main">
 
     <!-- ===================================================================
-         VIEW 1: MAPA DE MESAS (SELECCIÓN RÁPIDA & ESTADO DE SALÓN)
+         VIEW 1: MAPA DE MESAS (ACCESO RÁPIDO & EXPANDIDO + PACING ENGINE)
          =================================================================== -->
     <section class="view-panel" id="panel-mapa-mesas">
-      <div class="section-heading">
-        <div class="heading-row">
-          <div>
-            <h2>🗺️ Mapa de Mesas</h2>
-            <p>Acceso rápido a mesas, comensales y seguimiento del agua.</p>
+      <!-- Salon Executive Metrics Banner (Mecánica 1 & Pacing) -->
+      <div class="salon-kpi-banner">
+        <div class="kpi-block" title="Estado de Agua en Salón">
+          <div class="kpi-icon">💧</div>
+          <div class="kpi-text">
+            <span class="kpi-title">SERVICIO DE AGUA</span>
+            <span class="kpi-val" id="water-salon-summary">Salón al 100%</span>
           </div>
-          <!-- Resumen de Servicio de Agua en Salón -->
-          <div class="water-summary-badge" title="Estado de agua en el salón">
-            <span class="water-icon-small">💧</span>
-            <span id="water-salon-summary">Mesas al día</span>
+        </div>
+
+        <div class="kpi-block" title="Pacing Michelin (Ventana Óptima 15-25 min por pase)">
+          <div class="kpi-icon">⏱️</div>
+          <div class="kpi-text">
+            <span class="kpi-title">RITMO MICHELIN (PACING)</span>
+            <span class="kpi-val" id="pacing-salon-summary">14 Óptimo · 2 Marchar · 0 Demora</span>
+          </div>
+        </div>
+
+        <div class="kpi-block" title="Comensales Activos en Salón">
+          <div class="kpi-icon">👥</div>
+          <div class="kpi-text">
+            <span class="kpi-title">COMENSALES EN SALÓN</span>
+            <span class="kpi-val" id="diners-salon-summary">32 Huéspedes activos</span>
           </div>
         </div>
       </div>
 
+      <!-- Salon Control Toolbar: Quick/Expanded Switcher & Filters -->
+      <div class="salon-toolbar">
+        <div class="view-mode-switch-group">
+          <button class="btn-view-mode active" id="btn-mode-compact" title="Vista compacta de acceso ultra-rápido">
+            ⚡ Vista Rápida (Compacta)
+          </button>
+          <button class="btn-view-mode" id="btn-mode-expanded" title="Vista expandida con detalle de plato, stepper y avance de experiencia">
+            📋 Vista Expandida
+          </button>
+        </div>
+
+        <!-- Sector Filter Pills -->
+        <div class="sector-filters-scroll" id="sector-filters-wrap">
+          <button class="filter-pill active" data-sec="all">🏢 Todas (16)</button>
+          <button class="filter-pill" data-sec="salon1901">🍷 Salón 1901 (1-5)</button>
+          <button class="filter-pill" data-sec="galeria">🌿 Galería (6-10)</button>
+          <button class="filter-pill" data-sec="terraza">🍇 Terraza (11-14)</button>
+          <button class="filter-pill" data-sec="privado">🪵 Cava Barricas (15-16)</button>
+        </div>
+
+        <!-- Pacing Filter Pills -->
+        <div class="pacing-filter-group">
+          <button class="pacing-pill-filter active" data-pacing="all">Todos los tiempos</button>
+          <button class="pacing-pill-filter alert-filter" data-pacing="alert">⚠️ Marchar / Demora</button>
+        </div>
+      </div>
+
+      <!-- Container: Rendered via JS in either Compact Grid or Expanded Cards -->
       <div class="sectors-grid" id="sectors-container">
-        <!-- Rendered via JS: Terraza, Galería, Salón, Pérgola -->
+        <!-- Rendered dynamically -->
       </div>
     </section>
 
     <!-- ===================================================================
-         VIEW 2: COMANDA DE MESA (DESGLOSE POR COMENSAL & SEGUIMIENTO)
+         VIEW 2: COMANDA DE MESA (DESGLOSE, PACING HERO & SEGUIMIENTO)
          =================================================================== -->
     <section class="view-panel" id="panel-comanda-mesa" style="display: none;">
       <!-- Comanda Top Bar / Navigation -->
@@ -78,7 +156,7 @@
           ← <span>Mapa</span>
         </button>
         <div class="active-table-title-wrap">
-          <h2 id="title-active-table">Mesa 1 · Terraza Viñedos</h2>
+          <h2 id="title-active-table">Mesa 1 · Cava & Salón 1901</h2>
           <span class="table-time-opened" id="label-table-time">Abierta: 13:00</span>
         </div>
         <button class="btn-add-comensal-top" id="btn-add-comensal-top">
@@ -87,14 +165,86 @@
       </div>
 
       <!-- ===============================================================
+           HERO CARD: CONTROL DE PACING & AVANCE DE EXPERIENCIA GASTRONÓMICA
+           Muestra por cuál plato va, hace cuánto se bajó y botón para bajar plato
+           =============================================================== -->
+      <div class="pacing-hero-card" id="mesa-pacing-hero-card">
+        <div class="pacing-hero-header">
+          <div class="pacing-hero-title-box">
+            <span class="pacing-sub-kicker">CONTROL DE RITMO & EXPERIENCIA (MICHELIN PACING)</span>
+            <h3 class="pacing-current-dish" id="mesa-hero-dish-title">Paso 2 de 7: Remolacha de la huerta al rescoldo</h3>
+          </div>
+          <div class="pacing-hero-badge-wrap">
+            <span class="pacing-hero-chip" id="mesa-hero-pacing-chip">🟢 RITMO ÓPTIMO</span>
+          </div>
+        </div>
+
+        <!-- Live elapsed timer since course was dropped ("Bajado hace") -->
+        <div class="pacing-hero-timer-box" id="mesa-hero-timer-box">
+          <div class="timer-display-group">
+            <span class="timer-glyph">⏱️</span>
+            <div class="timer-labels">
+              <span class="timer-main-readout" id="mesa-hero-timer-readout">Plato bajado a mesa hace: <strong>12 min 30s</strong></span>
+              <span class="timer-sub-readout" id="mesa-hero-timer-sub">Ventana Michelin: 15 a 25 min por pase para marchar el siguiente paso</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Visual Stepper of Courses -->
+        <div class="pacing-stepper-visual" id="mesa-hero-stepper">
+          <!-- Rendered dynamically: Steps with completed, active, and upcoming indicators -->
+        </div>
+
+        <!-- Botón Maestro para Bajar el Plato y Avanzar en la Experiencia -->
+        <div class="pacing-hero-actions-row">
+          <button class="btn-hero-bajar" id="btn-hero-bajar-mesa" title="Bajar el plato actual a la mesa y avanzar al siguiente paso de la experiencia">
+            <div class="btn-bajar-inner">
+              <span class="bajar-icon">🍽️</span>
+              <div class="bajar-text-block">
+                <span class="bajar-main-title">BAJAR PLATO & AVANZAR EXPERIENCIA</span>
+                <span class="bajar-sub-title" id="mesa-hero-next-dish-hint">Avanzar al siguiente paso del comensal y reiniciar cronómetro</span>
+              </div>
+            </div>
+            <span class="bajar-arrow">➔</span>
+          </button>
+
+          <button class="btn-hero-undo" id="btn-hero-undo-mesa" title="Retroceder al paso anterior si se bajó por error">
+            <span>↩️</span>
+            <span class="undo-label">Paso Previo</span>
+          </button>
+        </div>
+
+        <!-- Collapsible Pacing History Log -->
+        <div class="pacing-history-wrapper">
+          <button class="btn-toggle-pacing-history" id="btn-toggle-pacing-history">
+            <span>📜 Ver Historial de Tiempos & Pasos Bajados</span>
+            <span id="history-toggle-arrow">▼</span>
+          </button>
+          <div class="pacing-history-content" id="mesa-pacing-history-content" style="display: none;">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+      </div>
+
+      <!-- ===============================================================
+           SELECTOR DE MENÚ RÁPIDO PARA TODA LA MESA
+           =============================================================== -->
+      <div class="table-quick-menu-presets">
+        <span class="presets-label">⚡ ASIGNAR MENÚ RÁPIDO A TODA LA MESA:</span>
+        <div class="preset-buttons-row">
+          <button class="btn-preset-menu" data-preset="5pasos">✨ 5 Pasos (Degustación)</button>
+          <button class="btn-preset-menu" data-preset="8pasos">👑 8 Pasos (Gran Experiencia)</button>
+          <button class="btn-preset-menu" data-preset="3pasos">🍽️ 3 Pasos (Almuerzo)</button>
+        </div>
+      </div>
+
+      <!-- ===============================================================
            BOTÓN SERVICIO DE AGUA (DEGRADADO VERDE -> ROJO)
-           Lleva el seguimiento del servicio de agua de la mesa
            =============================================================== -->
       <div class="water-tracker-container">
         <div class="water-tracker-card" id="water-tracker-card">
           <button class="btn-water-service" id="btn-water-service" title="Toca para registrar agua servida">
             <div class="water-bottle-wrap">
-              <!-- SVG Botella de Agua Estilizada -->
               <svg class="water-bottle-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M8 2h8" />
                 <path d="M9 2v3h6V2" />
@@ -150,40 +300,42 @@
         </button>
       </div>
 
-      <!-- Bebidas & Vinos de la Mesa -->
+      <!-- Bebidas & Vinos de la Mesa (Con Localización de Bodega / Bin) -->
       <div class="mesa-section-card">
         <div class="mesa-section-header">
-          <h3>🍷 Vinos de Martino Wines & Bebidas para la Mesa</h3>
-          <span class="section-hint">Compartidas para la mesa</span>
+          <div>
+            <h3>🍷 Vinos de Martino Wines & Bebidas para la Mesa</h3>
+            <span class="section-hint">Compartidas para la mesa · Con ubicación exacta en Cava 1901</span>
+          </div>
         </div>
         <div class="bebidas-selector-wrap">
           <div class="quick-drink-row">
             <select id="select-add-bebida" class="drink-select">
               <option value="">+ Seleccionar Vino o Bebida para agregar...</option>
-              <optgroup label="Línea Baldomir & Íconos Martino">
-                <option value="Baldomir Gran Malbec Ícono ($68.000)|68000">Baldomir Gran Malbec (Ícono) · $68.000</option>
-                <option value="Baldomir Serie Terroirs Cabernet Franc ($46.000)|46000">Baldomir Serie Terroirs Cab. Franc · $46.000</option>
-                <option value="Baldomir Serie Terroirs Malbec ($46.000)|46000">Baldomir Serie Terroirs Malbec · $46.000</option>
-                <option value="Martino Superiore Cabernet Sauvignon ($36.000)|36000">Martino Superiore Cab. Sauvignon · $36.000</option>
-                <option value="Martino Superiore Malbec ($36.000)|36000">Martino Superiore Malbec · $36.000</option>
+              <optgroup label="Línea Baldomir & Íconos Martino (Cava Histórica 1901)">
+                <option value="Baldomir Gran Malbec Ícono ($68.000)|68000|Bin C-4-12">Baldomir Gran Malbec (Ícono) · $68.000 [Bin C-4-12]</option>
+                <option value="Baldomir Serie Terroirs Cabernet Franc ($46.000)|46000|Bin C-2-04">Baldomir Serie Terroirs Cab. Franc · $46.000 [Bin C-2-04]</option>
+                <option value="Baldomir Serie Terroirs Malbec ($46.000)|46000|Bin C-2-08">Baldomir Serie Terroirs Malbec · $46.000 [Bin C-2-08]</option>
+                <option value="Martino Superiore Cabernet Sauvignon ($36.000)|36000|Bin G-1-03">Martino Superiore Cab. Sauvignon · $36.000 [Bin G-1-03]</option>
+                <option value="Martino Superiore Malbec ($36.000)|36000|Bin G-1-05">Martino Superiore Malbec · $36.000 [Bin G-1-05]</option>
               </optgroup>
-              <optgroup label="Martino Varietales Inusuales">
-                <option value="Martino Varietales Inusuales Marselan ($24.000)|24000">Martino Marselan (Inusual) · $24.000</option>
-                <option value="Martino Varietales Inusuales Sangiovese ($24.000)|24000">Martino Sangiovese (Inusual) · $24.000</option>
-                <option value="Martino Varietales Inusuales Graciano ($24.000)|24000">Martino Graciano (Inusual) · $24.000</option>
-                <option value="Martino Varietales Inusuales Petit Verdot ($24.000)|24000">Martino Petit Verdot (Inusual) · $24.000</option>
-                <option value="Martino Varietales Inusuales Garnacha ($24.000)|24000">Martino Garnacha (Inusual) · $24.000</option>
+              <optgroup label="Martino Varietales Inusuales (Cava Galería)">
+                <option value="Martino Varietales Inusuales Marselan ($24.000)|24000|Bin G-2-11">Martino Marselan (Inusual) · $24.000 [Bin G-2-11]</option>
+                <option value="Martino Varietales Inusuales Sangiovese ($24.000)|24000|Bin G-2-18">Martino Sangiovese (Inusual) · $24.000 [Bin G-2-18]</option>
+                <option value="Martino Varietales Inusuales Graciano ($24.000)|24000|Bin G-2-15">Martino Graciano (Inusual) · $24.000 [Bin G-2-15]</option>
+                <option value="Martino Varietales Inusuales Petit Verdot ($24.000)|24000|Bin G-2-20">Martino Petit Verdot (Inusual) · $24.000 [Bin G-2-20]</option>
+                <option value="Martino Varietales Inusuales Garnacha ($24.000)|24000|Bin G-2-22">Martino Garnacha (Inusual) · $24.000 [Bin G-2-22]</option>
               </optgroup>
-              <optgroup label="Blancos, Rosés & Espumosos">
-                <option value="Martino Pedro Ximénez Varietal Insignia ($21.000)|21000">Martino Pedro Ximénez (Insignia) · $21.000</option>
-                <option value="Martino Superiore Chardonnay ($29.000)|29000">Martino Superiore Chardonnay · $29.000</option>
-                <option value="Martino Rosé de Sangiovese ($21.000)|21000">Martino Rosé de Sangiovese · $21.000</option>
-                <option value="Martino Extra Brut Método Tradicional ($31.000)|31000">Martino Extra Brut Champenoise · $31.000</option>
+              <optgroup label="Blancos, Rosés & Espumosos (Cava Fría Terraza)">
+                <option value="Martino Pedro Ximénez Varietal Insignia ($21.000)|21000|Bin T-1-02">Martino Pedro Ximénez (Insignia) · $21.000 [Bin T-1-02]</option>
+                <option value="Martino Superiore Chardonnay ($29.000)|29000|Bin T-1-05">Martino Superiore Chardonnay · $29.000 [Bin T-1-05]</option>
+                <option value="Martino Rosé de Sangiovese ($21.000)|21000|Bin T-1-08">Martino Rosé de Sangiovese · $21.000 [Bin T-1-08]</option>
+                <option value="Martino Extra Brut Método Tradicional ($31.000)|31000|Bin T-2-01">Martino Extra Brut Champenoise · $31.000 [Bin T-2-01]</option>
               </optgroup>
               <optgroup label="Sin Alcohol & Cafetería">
-                <option value="Agua Villavicencio con gas ($3.500)|3500">Agua con gas · $3.500</option>
-                <option value="Agua Villavicencio sin gas ($3.500)|3500">Agua sin gas · $3.500</option>
-                <option value="Café espresso de especialidad ($3.200)|3200">Café espresso · $3.200</option>
+                <option value="Agua Villavicencio con gas ($3.500)|3500|Barra">Agua con gas · $3.500 [Barra]</option>
+                <option value="Agua Villavicencio sin gas ($3.500)|3500|Barra">Agua sin gas · $3.500 [Barra]</option>
+                <option value="Café espresso de especialidad ($3.200)|3200|Barra">Café espresso · $3.200 [Barra]</option>
               </optgroup>
             </select>
             <button class="btn-add-drink" id="btn-add-drink-item">Agregar</button>
@@ -195,28 +347,303 @@
         </div>
       </div>
 
-      <!-- Resumen y Gran Botón de WhatsApp -->
+      <!-- Resumen Compacto y Envío Ágil a WhatsApp -->
       <div class="comanda-send-footer">
-        <div class="footer-summary-row">
-          <div class="summary-diners-count" id="summary-diners-label">2 Comensales</div>
-          <div class="summary-total-box">
-            <span class="total-caption">TOTAL ESTIMADO:</span>
-            <span class="total-amount" id="summary-total-amount">$0</span>
+        <div class="footer-compact-container">
+          <div class="footer-summary-row-compact">
+            <span class="summary-diners-count" id="summary-diners-label">2 Comensales</span>
+            <div class="summary-total-box">
+              <span class="total-caption">TOTAL:</span>
+              <span class="total-amount" id="summary-total-amount">$0</span>
+            </div>
+          </div>
+
+          <div class="footer-actions-compact-row">
+            <button class="btn-send-whatsapp-compact" id="btn-send-comanda-wa" title="Enviar Comanda a Cocina por WhatsApp">
+              <svg class="wa-btn-icon-sm" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.3C4.19 14.91 3.73 13.3 3.73 11.91C3.73 7.37 7.46 3.67 12.05 3.67M9.06 7.42C8.89 7.42 8.62 7.48 8.38 7.74C8.15 8 7.49 8.62 7.49 9.87C7.49 11.12 8.4 12.33 8.53 12.5C8.66 12.67 10.32 15.23 12.86 16.32C13.46 16.58 13.93 16.74 14.3 16.85C14.91 17.05 15.46 17.02 15.9 16.96C16.39 16.89 17.41 16.34 17.62 15.75C17.83 15.16 17.83 14.66 17.77 14.55C17.71 14.44 17.54 14.38 17.29 14.25C17.04 14.13 15.82 13.53 15.59 13.44C15.36 13.36 15.2 13.32 15.03 13.57C14.86 13.82 14.38 14.38 14.24 14.55C14.1 14.72 13.95 14.74 13.7 14.61C13.45 14.49 12.38 14.14 11.12 13.01C10.14 12.13 9.47 11.05 9.28 10.72C9.09 10.39 9.26 10.21 9.38 10.09C9.5 9.97 9.64 9.79 9.77 9.64C9.9 9.49 9.94 9.38 10.02 9.22C10.1 9.05 10.06 8.91 10 8.78C9.94 8.66 9.44 7.44 9.24 6.94C9.04 6.45 8.84 6.52 8.68 6.52L8.27 6.51C8.08 6.51 7.78 6.58 7.55 6.83"/>
+              </svg>
+              <span>Enviar a Cocina</span>
+            </button>
+            <button class="btn-sec-clean-compact" id="btn-vaciar-mesa" title="Reiniciar y Vaciar Mesa">🗑️ Vaciar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 3: PASE KDS COCINA & CONTROL DE EXPEDICIÓN (BOH)
+         Mecánica 1 & 4: ASPORD & Toast KDS, Pacing Engine, Silent Pass
+         =================================================================== -->
+    <section class="view-panel" id="panel-kds-cocina" style="display: none;">
+      <div class="section-heading">
+        <div class="heading-row">
+          <div>
+            <h2>🍳 Pase KDS Cocina & Control de Expedición (Pass Master)</h2>
+            <p>Orquestación coreográfica BOH · Enrutamiento por estaciones, Auto-Fire retardado y mitigación acústica.</p>
+          </div>
+          <div class="kds-silence-chip" title="Mitigación Acústica: Alertas visuales cromáticas sin zumbadores molestos en sala">
+            <span>🔕</span> Silencio Acústico Activo
+          </div>
+        </div>
+      </div>
+
+      <!-- KDS Station Filter -->
+      <div class="kds-station-filter-bar">
+        <button class="kds-st-btn active" data-station="all">Todas las Estaciones</button>
+        <button class="kds-st-btn" data-station="frio">🥗 Cuarto Frío (Garde Manger)</button>
+        <button class="kds-st-btn" data-station="brasas">🥩 Brasas & Saucier</button>
+        <button class="kds-st-btn" data-station="postres">🍰 Pastelería & Postres</button>
+      </div>
+
+      <!-- KDS Grid of Active Table Orders -->
+      <div class="kds-tickets-grid" id="kds-tickets-container">
+        <!-- Rendered dynamically via JS -->
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 4: TRAZABILIDAD EXTREMA DE ALÉRGENOS & LIFE-SAFETY AUDIT TRAIL
+         Mecánica 3: FALCPA / Reglamento (UE) 1169/2011 · Prevención Anafilaxia
+         =================================================================== -->
+    <section class="view-panel" id="panel-alergenos" style="display: none;">
+      <div class="section-heading">
+        <div class="heading-row">
+          <div>
+            <h2>🛡️ Matriz de Alérgenos & Life-Safety Audit Trail</h2>
+            <p>Trazabilidad inmutable de alérgenos mayores (Reglamento UE 1169/2011 & FALCPA) y cadena de custodia probatoria.</p>
+          </div>
+          <button class="btn-export-audit" id="btn-export-audit-log">
+            📥 Descargar Registro Probatorio (Audit Trail)
+          </button>
+        </div>
+      </div>
+
+      <!-- Allergen Collision Warning Card -->
+      <div class="allergen-collision-banner" id="allergen-collision-banner">
+        <div class="ac-icon">⚠️</div>
+        <div class="ac-text">
+          <strong>MONITOREO ACTIVO DE COLISIÓN DE ALÉRGENOS</strong>
+          <p id="ac-collision-summary">No se detectan discrepancias críticas en las 16 mesas.</p>
+        </div>
+      </div>
+
+      <!-- Allergen Matrix by Table -->
+      <div class="allergen-matrix-container" id="allergen-matrix-list">
+        <!-- Rendered dynamically -->
+      </div>
+
+      <!-- Immutable Audit Trail Table -->
+      <div class="audit-trail-card">
+        <div class="audit-trail-header">
+          <h3>📜 Cadena de Custodia & Registro Inmutable con Firmas de Tiempo</h3>
+          <span class="audit-norm-badge">Audit Trail Conforme Art. 9 FALCPA</span>
+        </div>
+        <div class="table-responsive">
+          <table class="audit-trail-table">
+            <thead>
+              <tr>
+                <th>TIMESTAMP</th>
+                <th>MESA / COMENSAL</th>
+                <th>OPERADOR FOH / BOH</th>
+                <th>RESTRICCIÓN / ACCIÓN</th>
+                <th>VALIDACIÓN DE CONTAMINACIÓN CRUZADA</th>
+                <th>ESTADO LEGAL</th>
+              </tr>
+            </thead>
+            <tbody id="audit-trail-tbody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 5: CAVA 1901 & TOPOLOGÍA DE BODEGA (SOMMELIER)
+         BinWise & KwickOS model · Mapas de Bins y Stock
+         =================================================================== -->
+    <section class="view-panel" id="panel-bodega" style="display: none;">
+      <div class="section-heading">
+        <div class="heading-row">
+          <div>
+            <h2>🍷 Gestión Dinámica de Vinos & Topología de Bodega Cava 1901</h2>
+            <p>Modelo BinWise & KwickOS · Mapa de estanterías, ubicación física de añadas raras y deducción de stock en tiempo real.</p>
+          </div>
+          <div class="cava-summary-pill">
+            <span>🍾</span> 14 Etiquetas en Carta · 100% Ubicadas en Bins
+          </div>
+        </div>
+      </div>
+
+      <div class="cava-grid-layout">
+        <!-- Sector Cava 1901 -->
+        <div class="cava-rack-card">
+          <div class="cava-rack-header">
+            <h4>🍷 Sector Cava Histórica 1901 (Adobe Subterráneo)</h4>
+            <span class="rack-temp">14.5°C · 75% Humedad</span>
+          </div>
+          <div class="bins-list" id="bins-cava-historica">
+            <!-- Rendered via JS -->
           </div>
         </div>
 
-        <button class="btn-send-whatsapp" id="btn-send-comanda-wa">
-          <svg class="wa-btn-icon" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91C2.13 13.66 2.59 15.36 3.45 16.86L2.05 22L7.3 20.62C8.75 21.41 10.38 21.83 12.04 21.83C17.5 21.83 21.95 17.38 21.95 11.92C21.95 9.27 20.92 6.78 19.05 4.91C17.18 3.03 14.69 2 12.04 2M12.05 3.67C14.25 3.67 16.31 4.53 17.87 6.09C19.42 7.65 20.28 9.72 20.28 11.92C20.28 16.46 16.58 20.15 12.04 20.15C10.56 20.15 9.11 19.76 7.85 19L7.55 18.83L4.43 19.65L5.26 16.61L5.06 16.3C4.19 14.91 3.73 13.3 3.73 11.91C3.73 7.37 7.46 3.67 12.05 3.67M9.06 7.42C8.89 7.42 8.62 7.48 8.38 7.74C8.15 8 7.49 8.62 7.49 9.87C7.49 11.12 8.4 12.33 8.53 12.5C8.66 12.67 10.32 15.23 12.86 16.32C13.46 16.58 13.93 16.74 14.3 16.85C14.91 17.05 15.46 17.02 15.9 16.96C16.39 16.89 17.41 16.34 17.62 15.75C17.83 15.16 17.83 14.66 17.77 14.55C17.71 14.44 17.54 14.38 17.29 14.25C17.04 14.13 15.82 13.53 15.59 13.44C15.36 13.36 15.2 13.32 15.03 13.57C14.86 13.82 14.38 14.38 14.24 14.55C14.1 14.72 13.95 14.74 13.7 14.61C13.45 14.49 12.38 14.14 11.12 13.01C10.14 12.13 9.47 11.05 9.28 10.72C9.09 10.39 9.26 10.21 9.38 10.09C9.5 9.97 9.64 9.79 9.77 9.64C9.9 9.49 9.94 9.38 10.02 9.22C10.1 9.05 10.06 8.91 10 8.78C9.94 8.66 9.44 7.44 9.24 6.94C9.04 6.45 8.84 6.52 8.68 6.52L8.27 6.51C8.08 6.51 7.78 6.58 7.55 6.83"/>
-          </svg>
-          <div class="wa-btn-text">
-            <span class="btn-main-title">ENVIAR COMANDA A COCINA</span>
-            <span class="btn-sub-title" id="wa-send-target-label">Redirecciona al WhatsApp de Cocina</span>
+        <!-- Sector Galería -->
+        <div class="cava-rack-card">
+          <div class="cava-rack-header">
+            <h4>🌿 Sector Cava Galería (Varietales Inusuales)</h4>
+            <span class="rack-temp">16.0°C · 68% Humedad</span>
           </div>
-        </button>
+          <div class="bins-list" id="bins-cava-galeria">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
 
-        <div class="secondary-actions">
-          <button class="btn-sec-clean" id="btn-vaciar-mesa">🗑️ Vaciar y Reiniciar Mesa</button>
+        <!-- Sector Blancos & Espumosos -->
+        <div class="cava-rack-card">
+          <div class="cava-rack-header">
+            <h4>❄️ Cava Climatizada Fría (Blancos & Champenoise)</h4>
+            <span class="rack-temp">8.5°C · 70% Humedad</span>
+          </div>
+          <div class="bins-list" id="bins-cava-fria">
+            <!-- Rendered via JS -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         VIEW 7: BLUEPRINT ARQUITECTÓNICO & DOSSIER DE ALTA GASTRONOMÍA
+         Compendio Completo del Estudio Técnico de Soluciones Globales
+         =================================================================== -->
+    <section class="view-panel" id="panel-blueprint" style="display: none;">
+      <div class="blueprint-dossier-wrapper">
+        <header class="dossier-header">
+          <span class="dossier-badge">DOCUMENTO DE INGENIERÍA & ARQUITECTURA DE SOFTWARE</span>
+          <h2>Arquitectura Tecnológica para la Alta Gastronomía: Análisis de Soluciones Globales y Diseño del Ecosistema Perfecto</h2>
+          <p class="dossier-meta">Google Antigravity Architecture Framework · Guía Michelin Standards · FOH & BOH Synthesis</p>
+        </header>
+
+        <div class="dossier-body">
+          <!-- Acordeón Sección 1: Introducción y Contexto -->
+          <details class="dossier-section" open>
+            <summary class="dossier-summary">
+              <span class="sec-num">01</span>
+              <span class="sec-title">Fundamentos Operativos & Necesidad del Ecosistema Integral</span>
+            </summary>
+            <div class="dossier-content">
+              <p>La convergencia entre la hospitalidad de lujo y la infraestructura digital ha redefinido los estándares operativos de la alta gastronomía contemporánea. En un entorno donde la perfección es la línea de base y el margen de error es inexistente, la tecnología ya no opera como un mero facilitador transaccional, sino como el sistema nervioso central del restaurante.</p>
+              <p>Los establecimientos galardonados con estrellas Michelin y los referentes del fine dining requieren una orquestación milimétrica que sincronice las expectativas del comensal, la precisión algorítmica de los tiempos de cocina y la viabilidad financiera del negocio a través del control de mermas y prevención de ausencias.</p>
+            </div>
+          </details>
+
+          <!-- Acordeón Sección 2: Plataformas Líderes Globales -->
+          <details class="dossier-section" open>
+            <summary class="dossier-summary">
+              <span class="sec-num">02</span>
+              <span class="sec-title">Análisis de Soluciones Globales (SevenRooms, CoverManager, Meitre, Resy, OpenTable)</span>
+            </summary>
+            <div class="dossier-content">
+              <p>La industria global se divide entre plataformas de red (marketplace) y plataformas de soberanía de datos (First-Party CRM):</p>
+              <div class="table-responsive">
+                <table class="dossier-table">
+                  <thead>
+                    <tr>
+                      <th>Plataforma</th>
+                      <th>Enfoque en Alta Gastronomía</th>
+                      <th>Soberanía de Datos (CRM)</th>
+                      <th>Modelo Financiero</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><strong>SevenRooms</strong></td>
+                      <td>Propiedad de datos, IA de asignación y retención</td>
+                      <td>Perfiles 360° unificados direct-to-consumer</td>
+                      <td>Suscripción sin comisiones por cubierto</td>
+                    </tr>
+                    <tr>
+                      <td><strong>CoverManager</strong></td>
+                      <td>Protección contra no-shows y motor de depósitos</td>
+                      <td>Datos compartidos entre sedes del grupo</td>
+                      <td>Suscripción plana, líder en restaurantes Michelin</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Meitre</strong></td>
+                      <td>Excelencia en LatAm, adopción en Tegui, Casa Cavia, Aramburu</td>
+                      <td>Perfiles de alta fidelidad y depósitos en moneda local</td>
+                      <td>Suscripción sin comisiones por reserva</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Resy</strong></td>
+                      <td>Alta cocina en EE. UU., lealtad American Express</td>
+                      <td>Perfiles enriquecidos con notas dietéticas</td>
+                      <td>Suscripción por niveles</td>
+                    </tr>
+                    <tr>
+                      <td><strong>OpenTable</strong></td>
+                      <td>Descubrimiento masivo a través de red global</td>
+                      <td>Datos compartidos con marketplace</td>
+                      <td>Tarifas por cubierto en red de descubrimiento</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </details>
+
+          <!-- Acordeón Sección 3: Las 6 Mecánicas Operativas Fundamentales -->
+          <details class="dossier-section" open>
+            <summary class="dossier-summary">
+              <span class="sec-num">03</span>
+              <span class="sec-title">Las 6 Mecánicas Operativas Fundamentales Implementadas</span>
+            </summary>
+            <div class="dossier-content">
+              <div class="mechanics-cards-grid">
+                <div class="m-card">
+                  <h4>Mecánica 1: Course Pacing & Disparo Retardado</h4>
+                  <p>Orquestación milimétrica de 15 a 25 minutos por pase (estándar Guía Michelin). Estado latente, delayed auto-fire de cocciones lentas y control táctil por parte del Expediter.</p>
+                </div>
+                <div class="m-card">
+                  <h4>Mecánica 2: Resiliencia Offline & Edge Local-First</h4>
+                  <p>Operación continua ante cortes de internet. Red local con buses de eventos WebSockets (< 1ms). Sincronización CRDT con reconciliación a la nube tras reconexión.</p>
+                </div>
+                <div class="m-card">
+                  <h4>Mecánica 3: Trazabilidad Extrema de Alérgenos</h4>
+                  <p>Identificación taxonómica FALCPA y Reglamento UE 1169/2011. Bloqueo preventivo en FOH, cromatismo de advertencia en BOH y Audit Trail inmutable con valor probatorio.</p>
+                </div>
+                <div class="m-card">
+                  <h4>Mecánica 4: Ergonomía de Hardware & Contención Acústica</h4>
+                  <p>Modo Oscuro real (#121212) para iluminación tenue de fine dining. Reemplazo de zumbadores acústicos por destellos visuales cromáticos y compatibilidad con Bump Bars IP65.</p>
+                </div>
+                <div class="m-card">
+                  <h4>Mecánica 5: Modelado de Datos 3NF & Recetas con Merma</h4>
+                  <p>Estructura relacional profunda: Plato -> Receta -> Sub-recetas -> Ingredientes base con factor de merma (Yield). Actualización dinámica del costo de alimentos (COGS).</p>
+                </div>
+                <div class="m-card">
+                  <h4>Mecánica 6: Orquestación Integral del Servicio</h4>
+                  <p>Sincronización en tiempo real entre mozos, sommeliers y pase de cocina mediante comanderos ágiles y envíos directos de comandas.</p>
+                </div>
+              </div>
+            </div>
+          </details>
+
+          <!-- Acordeón Sección 4: Blueprint Arquitectónico FOH / BOH -->
+          <details class="dossier-section" open>
+            <summary class="dossier-summary">
+              <span class="sec-num">04</span>
+              <span class="sec-title">Blueprint Arquitectónico: El Ecosistema Definitivo</span>
+            </summary>
+            <div class="dossier-content">
+              <p>El sistema sintetiza cuatro pilares sinérgicos:</p>
+              <ul class="dossier-list">
+                <li><strong>1. Núcleo Híbrido (Local-First Sync):</strong> Servidor Edge de borde para latencia ultrabaja en salón y cocina sin depender de conexiones WAN.</li>
+                <li><strong>2. Módulo de Sala (FOH):</strong> Dashboard predictivo, comanderos oscurecidos, advertencias de alérgenos y cálculo de tiempos de bajada de plato.</li>
+                <li><strong>3. Módulo de Cocina (BOH):</strong> Estaciones satélites (Garde Manger, Saucier, Pastelería) con bump bars y Master Pass de expedición.</li>
+                <li><strong>4. Módulo Administrativo:</strong> Costeo dinámico, bóveda legal de auditoría de alérgenos y liquidación de servicios de salón.</li>
+              </ul>
+            </div>
+          </details>
         </div>
       </div>
     </section>
@@ -235,7 +662,7 @@
       <div class="modal-box-body">
         <p class="modal-desc">
           Ingresa el número de teléfono con código de país y área (sin espacios, guiones ni '+').
-          <strong>Se guarda en este teléfono y queda configurado para todos los envíos.</strong>
+          <strong>Se guarda en este dispositivo y queda configurado para todos los envíos.</strong>
         </p>
 
         <div class="input-wa-group">
@@ -244,7 +671,7 @@
         </div>
 
         <div class="mozo-name-group">
-          <label for="input-mozo-name">Tu Nombre (Mozo / Camarero):</label>
+          <label for="input-mozo-name">Tu Nombre (Mozo / Sommelier):</label>
           <input type="text" id="input-mozo-name" value="Máximo" placeholder="Ej: Máximo" class="wa-text-input">
         </div>
 
