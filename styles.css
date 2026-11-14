@@ -1781,6 +1781,29 @@ body.dark-theme .btn-preset-example {
   color: var(--gold-accent) !important;
 }
 
+body.dark-theme .diner-choice-btn {
+  background: #191816 !important;
+  border-color: #332f2a !important;
+  color: #c9c2b7 !important;
+}
+
+body.dark-theme .diner-choice-btn.active {
+  background: #d4af37 !important;
+  color: #121212 !important;
+  border-color: #d4af37 !important;
+}
+
+body.dark-theme .btn-quick-add-sector {
+  background: rgba(212, 175, 55, 0.15) !important;
+  border-color: rgba(212, 175, 55, 0.4) !important;
+  color: #d4af37 !important;
+}
+
+body.dark-theme .btn-quick-add-sector:hover {
+  background: #d4af37 !important;
+  color: #121212 !important;
+}
+
 body.dark-theme .sector-card,
 body.dark-theme .comensal-card,
 body.dark-theme .mesa-section-card,
@@ -2364,6 +2387,104 @@ body.dark-theme .filter-pill.active {
 .pacing-pill-filter.alert-filter.active {
   background: rgba(245, 158, 11, 0.2);
   color: #f59e0b;
+}
+
+/* ==========================================================================
+   AGREGAR MESA Y ACCIONES DINÁMICAS DE SALÓN
+   ========================================================================== */
+.btn-add-mesa {
+  background: var(--gold-accent);
+  color: #121212;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 800;
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.btn-add-mesa:hover {
+  background: #e6c555;
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+  transform: translateY(-1px);
+}
+
+/* Botón rápido "+ Mesa" en cabecera de cada sector */
+.btn-quick-add-sector {
+  background: rgba(212, 175, 55, 0.12);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  color: var(--gold-accent);
+  font-family: var(--font-sans);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.2rem 0.65rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: var(--transition);
+}
+
+.btn-quick-add-sector:hover {
+  background: var(--gold-accent);
+  color: #121212;
+  border-color: var(--gold-accent);
+}
+
+/* Selector Rápido de Pax en Modal */
+.quick-diners-selector-row {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.diner-choice-btn {
+  flex: 1;
+  padding: 0.45rem 0.5rem;
+  font-size: 0.76rem;
+  text-align: center;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  background: var(--bg-app);
+  border: 1px solid var(--border-color);
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  transition: var(--transition);
+}
+
+.diner-choice-btn.active {
+  background: var(--gold-accent);
+  color: #121212;
+  border-color: var(--gold-accent);
+}
+
+/* Botón Eliminar Mesa en Comanda */
+.btn-sec-delete-compact {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  font-family: var(--font-sans);
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: var(--transition);
+}
+
+.btn-sec-delete-compact:hover {
+  background: #ef4444;
+  color: #ffffff;
 }
 
 /* ==========================================================================

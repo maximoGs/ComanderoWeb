@@ -137,6 +137,9 @@
         <div class="pacing-filter-group">
           <button class="pacing-pill-filter active" data-pacing="all">Todos los tiempos</button>
           <button class="pacing-pill-filter alert-filter" data-pacing="alert">⚠️ Marchar / Demora</button>
+          <button class="btn-add-mesa" id="btn-open-add-mesa" title="Agregar una nueva mesa al restaurante">
+            ➕ Nueva Mesa
+          </button>
         </div>
       </div>
 
@@ -366,6 +369,7 @@
               <span>Enviar a Cocina</span>
             </button>
             <button class="btn-sec-clean-compact" id="btn-vaciar-mesa" title="Reiniciar y Vaciar Mesa">🗑️ Vaciar</button>
+            <button class="btn-sec-delete-compact" id="btn-eliminar-mesa" title="Eliminar Mesa del Salón">❌ Quitar</button>
           </div>
         </div>
       </div>
@@ -683,6 +687,65 @@
       <div class="modal-box-footer">
         <button class="btn-cancel" id="btn-cancel-wa-modal">Cancelar</button>
         <button class="btn-save-wa" id="btn-save-wa-number">Guardar Número</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: AGREGAR NUEVA MESA AL SALÓN (FINE DINING)
+       =================================================================== -->
+  <div class="modal-backdrop" id="modal-add-mesa" style="display: none;">
+    <div class="modal-box">
+      <div class="modal-box-header">
+        <div>
+          <h3>➕ Nueva Mesa en Salón</h3>
+          <div class="modal-subtitle" style="font-size: 0.72rem; color: var(--gold-accent); margin-top: 0.15rem;">
+            Asignación de sector, comensales y menú de alta cocina
+          </div>
+        </div>
+        <button class="btn-close-modal" id="btn-close-add-mesa">✕</button>
+      </div>
+      <div class="modal-box-body">
+        <div class="input-wa-group">
+          <label for="input-new-mesa-name">Nombre / Identificador de la Mesa:</label>
+          <input type="text" id="input-new-mesa-name" placeholder="Ej: Mesa 17, Barra 1, Cava VIP..." class="wa-text-input">
+        </div>
+
+        <div class="input-wa-group">
+          <label for="select-new-mesa-sector">Sector del Restaurante:</label>
+          <select id="select-new-mesa-sector" class="drink-select">
+            <!-- Rendered dynamically -->
+          </select>
+        </div>
+
+        <div class="input-wa-group" id="group-custom-sector" style="display: none;">
+          <label for="input-new-sector-name">Nombre del Nuevo Sector:</label>
+          <input type="text" id="input-new-sector-name" placeholder="Ej: Pérgola Principal, Jardín de Invierno..." class="wa-text-input">
+        </div>
+
+        <div class="input-wa-group">
+          <label>Cantidad Inicial de Comensales:</label>
+          <div class="quick-diners-selector-row" id="diners-selector-group">
+            <button type="button" class="btn-step-option diner-choice-btn" data-diners="1">1 Pax</button>
+            <button type="button" class="btn-step-option diner-choice-btn active" data-diners="2">2 Pax</button>
+            <button type="button" class="btn-step-option diner-choice-btn" data-diners="4">4 Pax</button>
+            <button type="button" class="btn-step-option diner-choice-btn" data-diners="6">6 Pax</button>
+            <button type="button" class="btn-step-option diner-choice-btn" data-diners="8">8 Pax</button>
+          </div>
+        </div>
+
+        <div class="input-wa-group">
+          <label for="select-new-mesa-menu">Menú Inicial para los Comensales:</label>
+          <select id="select-new-mesa-menu" class="drink-select">
+            <option value="5pasos">✨ 5 Pasos (Degustación Clásica)</option>
+            <option value="8pasos">👑 8 Pasos (Gran Experiencia Martino)</option>
+            <option value="3pasos">🍽️ 3 Pasos (Almuerzo Fine Dining)</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-box-footer">
+        <button class="btn-cancel" id="btn-cancel-add-mesa">Cancelar</button>
+        <button class="btn-save-wa btn-create-table-action" id="btn-confirm-add-mesa">✅ Crear Mesa</button>
       </div>
     </div>
   </div>

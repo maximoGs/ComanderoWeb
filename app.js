@@ -96,13 +96,29 @@ document.addEventListener('DOMContentLoaded', () => {
     { code: 'Bin T-2-01', wine: 'Martino Extra Brut Champenoise', sector: 'Cava Climatizada Fría', rack: 'Estante T · Fila 2', stock: 36, temp: '8.5°C' }
   ];
 
-  // --- 2. Sectores y Mesas ---
-  const SECTORS_DEF = [
+  // --- 2. Sectores y Mesas Dinámicos ---
+  let SECTORS_DEF = [
     { id: 'salon1901', name: '🍷 Cava & Salón 1901', tables: [1, 2, 3, 4, 5] },
     { id: 'galeria', name: '🌿 Galería & Olivos', tables: [6, 7, 8, 9, 10] },
     { id: 'terraza', name: '🍇 Terraza Viñedos', tables: [11, 12, 13, 14] },
     { id: 'privado', name: '🪵 Cava de Barricas (Privado)', tables: [15, 16] }
   ];
+
+  const savedSectors = localStorage.getItem('martino_sectors_v2');
+  if (savedSectors) {
+    try {
+      const parsedSec = JSON.parse(savedSectors);
+      if (Array.isArray(parsedSec) && parsedSec.length > 0) {
+        SECTORS_DEF = parsedSec;
+      }
+    } catch (e) {
+      console.warn('Error cargando sectores guardados:', e);
+    }
+  }
+
+  function saveSectorsState() {
+    localStorage.setItem('martino_sectors_v2', JSON.stringify(SECTORS_DEF));
+  }
 
   // Helper para generar comensal predeterminado
   function createDefaultComensal(num, tipoMenu = '5pasos') {
@@ -133,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Inicializar mesas 1 a 16 con pacing y agua
+  // Inicializar mesas 1 a 16 base con pacing y agua
   const realisticStaggers = [0, 8, 14, 22, 6, 18, 27, 4, 12, 19, 9, 16, 26, 7, 13, 21];
   for (let i = 1; i <= 16; i++) {
     const sec = SECTORS_DEF.find(s => s.tables.includes(i));
@@ -144,6 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
         id: i,
         name: `Mesa ${i}`,
         sector: sec ? sec.name : 'General',
+        sectorId: sec ? sec.id : 'salon1901',
         openedAt: new Date(Date.now() - staggerMins * 60 * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         waterService: {
           lastServedAt: Date.now() - (i % 3) * 11 * 60 * 1000
@@ -159,32 +176,50 @@ document.addEventListener('DOMContentLoaded', () => {
         ],
         bebidas: []
       };
-    } else {
-      if (sec) tablesData[i].sector = sec.name;
-      if (!tablesData[i].waterService) {
-        tablesData[i].waterService = { lastServedAt: Date.now() };
-      }
-      if (!tablesData[i].pacing) {
-        tablesData[i].pacing = {
-          currentStepIndex: (i % 4),
-          lastServedAt: Date.now() - staggerMins * 60 * 1000,
-          history: []
-        };
-      }
-      // Migración de datos existentes a nuevos menús 5 / 8 / 3 pasos
-      if (tablesData[i].comensales) {
-        tablesData[i].comensales.forEach(c => {
-          if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
-          if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
-          if (c.tipoMenu === '7pasos' || c.tipoMenu === '4pasos' || !c.tipoMenu) {
-            c.tipoMenu = '5pasos';
-          } else if (c.tipoMenu === '2pasos') {
-            c.tipoMenu = '3pasos';
-          }
-        });
-      }
     }
   }
+
+  // Normalizar y asegurar integridad de todas las mesas en tablesData (incluyendo mesas agregadas)
+  Object.keys(tablesData).forEach(idStr => {
+    const i = parseInt(idStr, 10);
+    const sec = SECTORS_DEF.find(s => s.tables.includes(i));
+    if (sec) {
+      tablesData[i].sector = sec.name;
+      tablesData[i].sectorId = sec.id;
+    } else {
+      const matchSec = SECTORS_DEF.find(s => s.name === tablesData[i].sector) || SECTORS_DEF[0];
+      if (!matchSec.tables.includes(i)) {
+        matchSec.tables.push(i);
+      }
+      tablesData[i].sector = matchSec.name;
+      tablesData[i].sectorId = matchSec.id;
+    }
+
+    if (!tablesData[i].waterService) {
+      tablesData[i].waterService = { lastServedAt: Date.now() };
+    }
+    if (!tablesData[i].pacing) {
+      tablesData[i].pacing = {
+        currentStepIndex: 0,
+        lastServedAt: Date.now(),
+        history: []
+      };
+    }
+    // Migración de datos existentes a nuevos menús 5 / 8 / 3 pasos
+    if (tablesData[i].comensales) {
+      tablesData[i].comensales.forEach(c => {
+        if (!c.pasos5) c.pasos5 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos5Defaults));
+        if (!c.pasos8) c.pasos8 = JSON.parse(JSON.stringify(MENU_CATALOG.pasos8Defaults));
+        if (c.tipoMenu === '7pasos' || c.tipoMenu === '4pasos' || !c.tipoMenu) {
+          c.tipoMenu = '5pasos';
+        } else if (c.tipoMenu === '2pasos') {
+          c.tipoMenu = '3pasos';
+        }
+      });
+    }
+  });
+
+  saveSectorsState();
 
   function saveTablesState() {
     localStorage.setItem('martino_mesas_v2', JSON.stringify(tablesData));
@@ -253,6 +288,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnModeExpanded = document.getElementById('btn-mode-expanded');
   const sectorFiltersWrap = document.getElementById('sector-filters-wrap');
   const sectorsContainer = document.getElementById('sectors-container');
+  const btnOpenAddMesa = document.getElementById('btn-open-add-mesa');
+
+  // Modal Agregar Mesa
+  const modalAddMesa = document.getElementById('modal-add-mesa');
+  const btnCloseAddMesa = document.getElementById('btn-close-add-mesa');
+  const btnCancelAddMesa = document.getElementById('btn-cancel-add-mesa');
+  const btnConfirmAddMesa = document.getElementById('btn-confirm-add-mesa');
+  const inputNewMesaName = document.getElementById('input-new-mesa-name');
+  const selectNewMesaSector = document.getElementById('select-new-mesa-sector');
+  const groupCustomSector = document.getElementById('group-custom-sector');
+  const inputNewSectorName = document.getElementById('input-new-sector-name');
+  const selectNewMesaMenu = document.getElementById('select-new-mesa-menu');
+  const btnEliminarMesa = document.getElementById('btn-eliminar-mesa');
 
   // Mesa Comanda Navigation
   const btnGoMap = document.getElementById('btn-go-map');
@@ -709,15 +757,37 @@ document.addEventListener('DOMContentLoaded', () => {
     showToast('Modo Expandido con Steppers y Pacing Activado', '📋');
   });
 
-  // Filtros de Sector
-  document.querySelectorAll('.filter-pill').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeSectorFilter = btn.getAttribute('data-sec');
-      renderMapaMesas();
+  // Filtros de Sector Dinámicos
+  function renderSectorFilters() {
+    if (!sectorFiltersWrap) return;
+
+    const totalTables = Object.keys(tablesData).length;
+    let html = `
+      <button class="filter-pill ${activeSectorFilter === 'all' ? 'active' : ''}" data-sec="all">
+        🏢 Todas (${totalTables})
+      </button>
+    `;
+
+    SECTORS_DEF.forEach(s => {
+      const count = s.tables.filter(tid => tablesData[tid]).length;
+      html += `
+        <button class="filter-pill ${activeSectorFilter === s.id ? 'active' : ''}" data-sec="${s.id}">
+          ${s.name} (${count})
+        </button>
+      `;
     });
-  });
+
+    sectorFiltersWrap.innerHTML = html;
+
+    sectorFiltersWrap.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        sectorFiltersWrap.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        activeSectorFilter = btn.getAttribute('data-sec');
+        renderMapaMesas();
+      });
+    });
+  }
 
   // Filtros de Pacing
   document.querySelectorAll('.pacing-pill-filter').forEach(btn => {
@@ -732,6 +802,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // --- 10. RENDER MAPA DE MESAS (COMPACTO Y EXPANDIDO) ---
   function renderMapaMesas() {
     sectorsContainer.innerHTML = '';
+    renderSectorFilters();
     updateSalonMetricsBanner();
 
     if (activeViewMode === 'compact') {
@@ -751,7 +822,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let pacingDemora = 0;
     let totalDiners = 0;
 
-    for (let i = 1; i <= 16; i++) {
+    const tableIds = Object.keys(tablesData).map(Number).sort((a, b) => a - b);
+    for (const i of tableIds) {
       const t = tablesData[i];
       if (t) {
         // Agua
@@ -794,6 +866,8 @@ document.addEventListener('DOMContentLoaded', () => {
    * RENDER MAPA COMPACTO (ACCESO RÁPIDO + CHIP DE PLATO + BOTÓN BAJAR)
    */
   function renderMapaCompacto() {
+    const renderedTableIds = new Set();
+
     SECTORS_DEF.forEach(sector => {
       // Filtrar por sector
       if (activeSectorFilter !== 'all' && activeSectorFilter !== sector.id) return;
@@ -804,6 +878,9 @@ document.addEventListener('DOMContentLoaded', () => {
       let tablesHTML = '';
       sector.tables.forEach(num => {
         const t = tablesData[num];
+        if (!t) return;
+        renderedTableIds.add(num);
+
         const hasOrder = (t.comensales && t.comensales.length > 0) || (t.bebidas && t.bebidas.length > 0);
         const count = t.comensales ? t.comensales.length : 0;
         const total = calculateTableTotal(t);
@@ -851,29 +928,109 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
       });
 
-      if (tablesHTML) {
-        card.innerHTML = `
-          <div class="sector-header">${sector.name}</div>
-          <div class="tables-row">${tablesHTML}</div>
-        `;
+      card.innerHTML = `
+        <div class="sector-header">
+          <span class="sector-name-label">${sector.name}</span>
+          <button class="btn-quick-add-sector" data-sec-id="${sector.id}" title="Agregar mesa en ${sector.name}">
+            + Mesa
+          </button>
+        </div>
+        <div class="tables-row">${tablesHTML || '<div style="font-size: 0.78rem; color: #a39c92; padding: 0.5rem;">No hay mesas activas en este sector.</div>'}</div>
+      `;
 
-        // Listeners: click en tarjeta abre comanda; click en botón bajar ejecuta avance
-        card.querySelectorAll('.table-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            if (e.target.closest('.btn-quick-bajar-step')) {
-              e.stopPropagation();
-              const tid = parseInt(btn.getAttribute('data-table-id'), 10);
-              bajarPlatoAvanzarPaso(tid);
-              return;
-            }
+      // Listeners: click en tarjeta abre comanda; click en botón bajar ejecuta avance
+      card.querySelectorAll('.table-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-quick-bajar-step')) {
+            e.stopPropagation();
             const tid = parseInt(btn.getAttribute('data-table-id'), 10);
-            showComanda(tid);
-          });
+            bajarPlatoAvanzarPaso(tid);
+            return;
+          }
+          const tid = parseInt(btn.getAttribute('data-table-id'), 10);
+          showComanda(tid);
         });
+      });
 
-        sectorsContainer.appendChild(card);
+      // Quick add to sector button
+      const btnAddSec = card.querySelector('.btn-quick-add-sector');
+      if (btnAddSec) {
+        btnAddSec.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openAddMesaModal(sector.id);
+        });
       }
+
+      sectorsContainer.appendChild(card);
     });
+
+    // Mesas huérfanas o especiales si existen
+    const allTableIds = Object.keys(tablesData).map(Number).sort((a,b) => a - b);
+    const unrenderedIds = allTableIds.filter(id => !renderedTableIds.has(id));
+    if (unrenderedIds.length > 0 && activeSectorFilter === 'all') {
+      const extraCard = document.createElement('div');
+      extraCard.className = 'sector-card';
+      let extraTablesHTML = '';
+      unrenderedIds.forEach(num => {
+        const t = tablesData[num];
+        if (!t) return;
+        const hasOrder = (t.comensales && t.comensales.length > 0) || (t.bebidas && t.bebidas.length > 0);
+        const count = t.comensales ? t.comensales.length : 0;
+        const total = calculateTableTotal(t);
+        const water = getWaterServiceStatus(t);
+        const pacing = getTablePacingStatus(t);
+        const course = getTableCourseSummary(t);
+
+        extraTablesHTML += `
+          <div class="table-btn ${hasOrder ? 'busy' : ''}" data-table-id="${num}">
+            <div class="tbl-btn-top">
+              <span class="tbl-name">${t.name}</span>
+              <span class="tbl-status-badge ${hasOrder ? 'busy' : 'free'}">
+                ${hasOrder ? 'En Mesa' : 'Libre'}
+              </span>
+            </div>
+            <div class="tbl-course-mini-summary" title="${course.currentStepName}">
+              🍽️ ${course.text}
+            </div>
+            <div class="tbl-pacing-chip" style="background: ${pacing.bg}; color: ${pacing.color};">
+              ⏱️ Bajado hace ${pacing.shortStr}
+            </div>
+            <div class="tbl-btn-bottom">
+              <span class="tbl-info">${count} pax</span>
+              ${total > 0 ? `<span class="tbl-total">$${(total / 1000).toFixed(0)}k</span>` : ''}
+              <span class="tbl-water-pill" style="background: ${water.miniBg}">
+                💧 ${water.mins}m
+              </span>
+            </div>
+            <div class="tbl-quick-actions">
+              <button class="btn-quick-bajar-step" data-table-id="${num}" title="Bajar plato actual">
+                🍽️ Bajar Paso
+              </button>
+            </div>
+          </div>
+        `;
+      });
+      extraCard.innerHTML = `
+        <div class="sector-header">
+          <span class="sector-name-label">⭐ Mesas Especiales / Adicionales</span>
+          <button class="btn-quick-add-sector" data-sec-id="salon1901">+ Mesa</button>
+        </div>
+        <div class="tables-row">${extraTablesHTML}</div>
+      `;
+      extraCard.querySelectorAll('.table-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          if (e.target.closest('.btn-quick-bajar-step')) {
+            e.stopPropagation();
+            const tid = parseInt(btn.getAttribute('data-table-id'), 10);
+            bajarPlatoAvanzarPaso(tid);
+            return;
+          }
+          const tid = parseInt(btn.getAttribute('data-table-id'), 10);
+          showComanda(tid);
+        });
+      });
+      sectorsContainer.appendChild(extraCard);
+    }
   }
 
   /**
@@ -883,8 +1040,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const listWrapper = document.createElement('div');
     listWrapper.className = 'expanded-tables-list';
 
-    for (let i = 1; i <= 16; i++) {
+    const tableIds = Object.keys(tablesData).map(Number).sort((a, b) => a - b);
+    for (const i of tableIds) {
       const t = tablesData[i];
+      if (!t) continue;
       const secDef = SECTORS_DEF.find(s => s.tables.includes(i));
       if (activeSectorFilter !== 'all' && secDef && secDef.id !== activeSectorFilter) continue;
 
@@ -1783,9 +1942,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderKDS() {
     kdsTicketsContainer.innerHTML = '';
 
-    for (let i = 1; i <= 16; i++) {
+    const tableIds = Object.keys(tablesData).map(Number).sort((a, b) => a - b);
+    for (const i of tableIds) {
       const t = tablesData[i];
-      if (!t.comensales || t.comensales.length === 0) continue;
+      if (!t || !t.comensales || t.comensales.length === 0) continue;
 
       const plan = getTableCoursePlan(t);
       const pacing = getTablePacingStatus(t);
@@ -1862,9 +2022,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let collisionsFound = 0;
 
-    for (let i = 1; i <= 16; i++) {
+    const tableIds = Object.keys(tablesData).map(Number).sort((a, b) => a - b);
+    for (const i of tableIds) {
       const t = tablesData[i];
-      if (!t.comensales) continue;
+      if (!t || !t.comensales) continue;
 
       const dinersWithRestrictions = t.comensales.filter(c => c.tags && c.tags.length > 0);
       if (dinersWithRestrictions.length === 0) continue;
@@ -1911,7 +2072,7 @@ document.addEventListener('DOMContentLoaded', () => {
       acCollisionSummary.textContent = `Se registran ${collisionsFound} restricciones dietéticas activas en salón. Protocolo de mitigación de contaminación cruzada verificado.`;
     } else {
       allergenCollisionBanner.className = 'allergen-collision-banner';
-      acCollisionSummary.textContent = 'No se detectan discrepancias críticas en las 16 mesas.';
+      acCollisionSummary.textContent = `No se detectan discrepancias críticas en las ${tableIds.length} mesas.`;
     }
 
     // Render Audit Trail Log
@@ -2017,6 +2178,210 @@ document.addEventListener('DOMContentLoaded', () => {
     modalWaConfig.style.display = 'none';
     showToast('Configuración guardada', '📱');
   });
+
+  // --- 19B. GESTIÓN Y CREACIÓN DE MESAS DINÁMICAS ---
+  let selectedNewMesaDiners = 2;
+
+  function addNewTable({ name, sectorId, customSectorName, dinerCount, initialMenu }) {
+    const existingIds = Object.keys(tablesData).map(Number);
+    const nextNum = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+
+    let newId = nextNum;
+    if (name) {
+      const matchNum = name.match(/\d+/);
+      if (matchNum) {
+        const parsed = parseInt(matchNum[0], 10);
+        if (!tablesData[parsed] && parsed > 0) {
+          newId = parsed;
+        }
+      }
+    }
+
+    // Resolver sector
+    let targetSector = null;
+    if (sectorId === '__new__' && customSectorName) {
+      const newSecId = 'sec_' + Date.now().toString(36);
+      targetSector = {
+        id: newSecId,
+        name: customSectorName,
+        tables: [newId]
+      };
+      SECTORS_DEF.push(targetSector);
+    } else {
+      targetSector = SECTORS_DEF.find(s => s.id === sectorId) || SECTORS_DEF[0];
+      if (!targetSector.tables.includes(newId)) {
+        targetSector.tables.push(newId);
+      }
+    }
+
+    const finalName = name || `Mesa ${newId}`;
+
+    tablesData[newId] = {
+      id: newId,
+      name: finalName,
+      sector: targetSector.name,
+      sectorId: targetSector.id,
+      openedAt: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      waterService: {
+        lastServedAt: Date.now()
+      },
+      pacing: {
+        currentStepIndex: 0,
+        lastServedAt: Date.now(),
+        history: []
+      },
+      comensales: Array.from({ length: dinerCount || 2 }, (_, idx) => 
+        createDefaultComensal(idx + 1, initialMenu || '5pasos')
+      ),
+      bebidas: []
+    };
+
+    saveTablesState();
+    saveSectorsState();
+    renderSectorFilters();
+    renderMapaMesas();
+    updateSalonMetricsBanner();
+
+    showToast(`✨ ${finalName} agregada en ${targetSector.name}`, '✨');
+    return newId;
+  }
+
+  function deleteTable(tableId) {
+    const t = tablesData[tableId];
+    if (!t) return;
+
+    const confirmMsg = `¿Confirmas eliminar la "${t.name}" del salón? Se quitará su comanda y asignación.`;
+    if (!confirm(confirmMsg)) return;
+
+    delete tablesData[tableId];
+
+    SECTORS_DEF.forEach(s => {
+      s.tables = s.tables.filter(tid => tid !== tableId);
+    });
+
+    saveTablesState();
+    saveSectorsState();
+    renderSectorFilters();
+    renderMapaMesas();
+    updateSalonMetricsBanner();
+
+    if (activeTableId === tableId) {
+      showPanel('panel-mapa-mesas');
+    }
+
+    showToast(`🗑️ ${t.name} eliminada del salón`, '🗑️');
+  }
+
+  function openAddMesaModal(preselectedSectorId) {
+    if (!modalAddMesa) return;
+
+    if (selectNewMesaSector) {
+      selectNewMesaSector.innerHTML = SECTORS_DEF.map(s => `
+        <option value="${s.id}" ${s.id === preselectedSectorId ? 'selected' : ''}>${s.name}</option>
+      `).join('') + `<option value="__new__">➕ Crear Nuevo Sector...</option>`;
+    }
+
+    if (groupCustomSector) {
+      groupCustomSector.style.display = 'none';
+      if (inputNewSectorName) inputNewSectorName.value = '';
+    }
+
+    const existingIds = Object.keys(tablesData).map(Number);
+    const nextNum = existingIds.length > 0 ? Math.max(...existingIds) + 1 : 1;
+    if (inputNewMesaName) {
+      inputNewMesaName.value = `Mesa ${nextNum}`;
+      setTimeout(() => inputNewMesaName.focus(), 100);
+    }
+
+    selectedNewMesaDiners = 2;
+    document.querySelectorAll('.diner-choice-btn').forEach(btn => {
+      if (parseInt(btn.getAttribute('data-diners'), 10) === 2) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    if (selectNewMesaMenu) {
+      selectNewMesaMenu.value = '5pasos';
+    }
+
+    modalAddMesa.style.display = 'flex';
+  }
+
+  function closeAddMesaModal() {
+    if (modalAddMesa) modalAddMesa.style.display = 'none';
+  }
+
+  if (btnOpenAddMesa) {
+    btnOpenAddMesa.addEventListener('click', () => openAddMesaModal());
+  }
+
+  if (btnCloseAddMesa) {
+    btnCloseAddMesa.addEventListener('click', closeAddMesaModal);
+  }
+
+  if (btnCancelAddMesa) {
+    btnCancelAddMesa.addEventListener('click', closeAddMesaModal);
+  }
+
+  if (modalAddMesa) {
+    modalAddMesa.addEventListener('click', (e) => {
+      if (e.target === modalAddMesa) closeAddMesaModal();
+    });
+  }
+
+  if (selectNewMesaSector) {
+    selectNewMesaSector.addEventListener('change', () => {
+      if (groupCustomSector) {
+        groupCustomSector.style.display = selectNewMesaSector.value === '__new__' ? 'flex' : 'none';
+        if (selectNewMesaSector.value === '__new__' && inputNewSectorName) {
+          inputNewSectorName.focus();
+        }
+      }
+    });
+  }
+
+  document.querySelectorAll('.diner-choice-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.diner-choice-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedNewMesaDiners = parseInt(btn.getAttribute('data-diners'), 10) || 2;
+    });
+  });
+
+  if (btnConfirmAddMesa) {
+    btnConfirmAddMesa.addEventListener('click', () => {
+      const rawName = inputNewMesaName ? inputNewMesaName.value.trim() : '';
+      const sectorId = selectNewMesaSector ? selectNewMesaSector.value : 'salon1901';
+      const customSectorName = inputNewSectorName ? inputNewSectorName.value.trim() : '';
+      const initialMenu = selectNewMesaMenu ? selectNewMesaMenu.value : '5pasos';
+
+      if (sectorId === '__new__' && !customSectorName) {
+        alert('Por favor ingresa un nombre para el nuevo sector.');
+        if (inputNewSectorName) inputNewSectorName.focus();
+        return;
+      }
+
+      addNewTable({
+        name: rawName,
+        sectorId,
+        customSectorName,
+        dinerCount: selectedNewMesaDiners,
+        initialMenu
+      });
+
+      closeAddMesaModal();
+    });
+  }
+
+  if (btnEliminarMesa) {
+    btnEliminarMesa.addEventListener('click', () => {
+      if (activeTableId) {
+        deleteTable(activeTableId);
+      }
+    });
+  }
 
   // --- 20. CRONÓMETRO Y TICKER EN TIEMPO REAL (CADA SEGUNDO) ---
   setInterval(() => {
