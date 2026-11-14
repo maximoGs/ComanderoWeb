@@ -80,16 +80,16 @@ body.simple-app {
 }
 
 /* ==========================================================================
-   Main Top Bar
+   Main Top Bar (Obsidian & Gold Luxury Header)
    ========================================================================== */
 .main-bar {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: var(--navy-dark);
-  color: #ffffff;
-  border-bottom: 1px solid rgba(197, 160, 89, 0.3);
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.35);
+  background: #0e0d0c !important;
+  color: #ffffff !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.5);
 }
 
 .bar-container {
@@ -125,21 +125,21 @@ body.simple-app {
   font-size: 0.95rem;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #ffffff;
+  color: #ffffff !important;
 }
 
 .brand-sub {
   font-size: 0.65rem;
   letter-spacing: 0.18em;
-  color: var(--gold-accent);
+  color: var(--gold-accent) !important;
   font-weight: 600;
 }
 
 /* WhatsApp Config Trigger */
 .btn-wa-config {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  color: #ffffff !important;
   padding: 0.45rem 0.8rem;
   border-radius: var(--radius-full);
   display: inline-flex;
@@ -153,7 +153,8 @@ body.simple-app {
 }
 
 .btn-wa-config:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.18);
+  border-color: var(--gold-accent);
 }
 
 .wa-dot {
@@ -294,7 +295,7 @@ body.simple-app {
   font-family: var(--font-serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--navy-dark);
+  color: var(--text-main);
 }
 
 .tbl-status-badge {
@@ -578,9 +579,9 @@ body.simple-app {
 }
 
 .btn-back {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
-  color: var(--navy-primary);
+  background: #191816;
+  border: 1px solid #3d3933;
+  color: var(--gold-accent);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 700;
@@ -594,7 +595,8 @@ body.simple-app {
 }
 
 .btn-back:hover {
-  background: var(--navy-soft);
+  background: #25231f;
+  color: #ffffff;
 }
 
 .active-table-title-wrap {
@@ -605,7 +607,7 @@ body.simple-app {
 .active-table-title-wrap h2 {
   font-family: var(--font-serif);
   font-size: 1.25rem;
-  color: var(--navy-dark);
+  color: var(--text-main);
   line-height: 1.2;
 }
 
@@ -615,20 +617,24 @@ body.simple-app {
 }
 
 .btn-add-comensal-top {
-  background: var(--navy-primary);
-  color: #ffffff;
+  background: var(--gold-accent);
+  color: #121212;
   border: none;
   font-family: var(--font-sans);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 0.5rem 0.9rem;
   border-radius: var(--radius-full);
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   transition: var(--transition);
 }
 
 .btn-add-comensal-top:hover {
-  background: var(--navy-dark);
+  background: #e6c555;
+  color: #000000;
 }
 
 /* Comensales Cards */
@@ -759,7 +765,7 @@ body.simple-app {
 }
 
 .comensal-quick-summary strong {
-  color: var(--navy-dark);
+  color: var(--gold-accent);
 }
 
 .comensal-card:not(.collapsed) .comensal-quick-summary {
@@ -788,7 +794,7 @@ body.simple-app {
 .menu-selector-label {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--navy-dark);
+  color: var(--gold-accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -863,7 +869,7 @@ body.simple-app {
 .course-title {
   font-size: 0.75rem;
   font-weight: 800;
-  color: var(--navy-dark);
+  color: var(--gold-accent);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   display: inline-flex;
@@ -1032,7 +1038,7 @@ body.simple-app {
   font-family: var(--font-serif);
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--navy-dark);
+  color: var(--text-main);
 }
 
 .otono-7pasos-price {
@@ -1113,7 +1119,7 @@ body.simple-app {
 .choice-label {
   font-size: 0.74rem;
   font-weight: 700;
-  color: var(--navy-dark);
+  color: var(--gold-accent);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -1191,9 +1197,9 @@ body.simple-app {
 
 .btn-add-comensal {
   width: 100%;
-  background: #ffffff;
-  border: 2px dashed #b8c8dc;
-  color: var(--navy-primary);
+  background: #1a1916;
+  border: 2px dashed #4a453e;
+  color: #d4af37;
   font-family: var(--font-sans);
   font-size: 0.88rem;
   font-weight: 700;
@@ -1208,8 +1214,9 @@ body.simple-app {
 }
 
 .btn-add-comensal:hover {
-  background: var(--navy-soft);
-  border-color: var(--navy-primary);
+  background: #24221e;
+  border-color: #d4af37;
+  color: #ffffff;
 }
 
 .plus-circle {
@@ -1219,9 +1226,10 @@ body.simple-app {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: var(--navy-primary);
-  color: #ffffff;
+  background: rgba(212, 175, 55, 0.2);
+  color: #d4af37;
   font-size: 1rem;
+  font-weight: 800;
 }
 
 /* ==========================================================================
@@ -1270,16 +1278,21 @@ body.simple-app {
 }
 
 .btn-add-drink {
-  background: var(--navy-primary);
-  color: #ffffff;
+  background: var(--gold-accent);
+  color: #121212;
   border: none;
   font-family: var(--font-sans);
   font-size: 0.78rem;
-  font-weight: 700;
+  font-weight: 800;
   padding: 0.65rem 1rem;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: var(--transition);
+}
+
+.btn-add-drink:hover {
+  background: #e6c555;
+  color: #000000;
 }
 
 .drinks-active-list {
@@ -1463,7 +1476,7 @@ body.simple-app {
 .modal-box-header h3 {
   font-family: var(--font-serif);
   font-size: 1.15rem;
-  color: var(--navy-dark);
+  color: var(--text-main);
 }
 
 .btn-close-modal {
@@ -1496,7 +1509,7 @@ body.simple-app {
 .input-wa-group label, .mozo-name-group label {
   font-size: 0.76rem;
   font-weight: 700;
-  color: var(--navy-dark);
+  color: var(--text-main);
 }
 
 .wa-text-input {
@@ -1545,14 +1558,21 @@ body.simple-app {
 }
 
 .btn-cancel {
-  background: #ffffff;
-  border: 1px solid var(--border-color);
+  background: #25231f;
+  border: 1px solid #3d3933;
+  color: #f5f2eb;
   padding: 0.6rem 1rem;
   border-radius: var(--radius-sm);
   font-family: var(--font-sans);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-cancel:hover {
+  background: #332f29;
+  color: #ffffff;
 }
 
 .btn-save-wa {
@@ -1569,20 +1589,21 @@ body.simple-app {
 }
 
 /* ==========================================================================
-   Toast Notification for Waiter Feedback
+   Toast Notification for Waiter Feedback (Luxury Toast #181715 & Gold)
    ========================================================================== */
 .toast-notice {
   position: fixed;
-  bottom: 90px;
+  bottom: 85px;
   left: 50%;
   transform: translateX(-50%) translateY(20px);
-  background: var(--navy-dark);
-  color: #ffffff;
-  padding: 0.65rem 1.2rem;
+  background: #181715 !important;
+  color: #f5f2eb !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  padding: 0.65rem 1.25rem;
   border-radius: var(--radius-full);
   font-size: 0.82rem;
-  font-weight: 600;
-  box-shadow: var(--shadow-lg);
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1651,7 +1672,7 @@ body.dark-theme {
   --bg-app: #121212;
   --bg-card: #1c1b18;
   --navy-primary: #d4af37;
-  --navy-dark: #f5f2eb;
+  --navy-dark: #121212;
   --navy-light: #24221f;
   --navy-soft: #2b2824;
   --text-main: #f5f2eb;
@@ -1666,6 +1687,98 @@ body.dark-theme {
   --status-free: #4ade80;
   --status-busy-bg: #30200e;
   --status-busy: #fbbf24;
+}
+
+body.dark-theme .main-bar {
+  background: #0e0d0c !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.35) !important;
+}
+
+body.dark-theme .brand-title {
+  color: #ffffff !important;
+}
+
+body.dark-theme .brand-sub {
+  color: var(--gold-accent) !important;
+}
+
+body.dark-theme .btn-wa-config {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+body.dark-theme .btn-back {
+  background: #191816 !important;
+  border: 1px solid #3d3933 !important;
+  color: var(--gold-accent) !important;
+}
+
+body.dark-theme .btn-back:hover {
+  background: #25231f !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .toast-notice {
+  background: #181715 !important;
+  color: #f5f2eb !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.dark-theme .diners-summary-badge {
+  background: #1c1b18 !important;
+  border-color: #332f2a !important;
+  color: #f5f2eb !important;
+}
+
+body.dark-theme .kpi-block strong {
+  color: #f5f2eb !important;
+}
+
+body.dark-theme .modal-title {
+  color: #f5f2eb !important;
+}
+
+body.dark-theme .modal-desc {
+  color: #a39c92 !important;
+}
+
+body.dark-theme .input-wa-group label,
+body.dark-theme .mozo-name-group label {
+  color: #dcd4c6 !important;
+}
+
+body.dark-theme .btn-add-comensal-top {
+  background: var(--gold-accent) !important;
+  color: #121212 !important;
+  font-weight: 800 !important;
+}
+
+body.dark-theme .btn-add-comensal-top:hover {
+  background: #e6c555 !important;
+  color: #000000 !important;
+}
+
+body.dark-theme .active-table-title-wrap h2 {
+  color: #ffffff !important;
+}
+
+body.dark-theme .btn-cancel {
+  background: #25231f !important;
+  border: 1px solid #3d3933 !important;
+  color: #f5f2eb !important;
+}
+
+body.dark-theme .btn-cancel:hover {
+  background: #332f29 !important;
+  color: #ffffff !important;
+}
+
+body.dark-theme .btn-preset-example {
+  background: #1c1b18 !important;
+  border-color: #3d3933 !important;
+  color: var(--gold-accent) !important;
 }
 
 body.dark-theme .sector-card,
@@ -3558,6 +3671,4 @@ body.dark-theme .btn-export-audit {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
-}
-
 }
